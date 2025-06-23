@@ -1,6 +1,4 @@
-"use client";
-
-import { SignUpPage } from "@/components/Pages/SignUp";
+import { SignUpPage } from "@/components/Pages/Auth/SignUp";
 
 
 const SignUp = () => {

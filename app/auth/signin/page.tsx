@@ -1,10 +1,8 @@
-import { SignInPage } from "@/components/Pages/SignIn";
+import { SignInPage } from "@/components/Pages/Auth/SignIn";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-
     title: "Login"
-
 }
 
 const SignIn = () => {
