@@ -12,7 +12,7 @@ import { APIrecover } from "@/types/accounts/recover";
 /* Auth / User */
 export const signIn = async (data: SignInData) => {
     return await api<APISignIn>({
-        endpoint: 'accounts/signin',
+        endpoint: 'users/login',
         method: 'POST',
         withAuth: false,
         data

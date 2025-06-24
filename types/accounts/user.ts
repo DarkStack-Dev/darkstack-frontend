@@ -1,14 +1,14 @@
 
 export type User = {
     id: string,
-    avatar: string,
+    // avatar: string,
     name: string,
     email: string,
-    type_account: string,
-    last_access: string,
-    is_superuser: boolean,
-    created_date: string,
-    deleted_at: string
+    roles: string[],
+    // last_access: string,
+    // is_superuser: boolean,
+    createdAt: string,
+    updatedAt: string
 }
 
 export type APIUser = {
