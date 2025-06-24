@@ -13,7 +13,7 @@ export const handleSignIn = async (data: SignInData) => {
         const cookieStore = await cookies() // Await aqui
         cookieStore.set({
             name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
-            value: response.data.access_token,
+            value: response.data.authToken,
             httpOnly: true,
             maxAge: 86400 * 7 // 7 days
         })
@@ -30,7 +30,7 @@ export const handleSignUp = async (data: SignUpData) => {
         const cookieStore = await cookies() // Await aqui
         cookieStore.set({
             name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
-            value: response.data.access_token,
+            value: response.data.authToken,
             httpOnly: true,
             maxAge: 86400 * 7
         })
@@ -42,21 +42,23 @@ export const handleSignUp = async (data: SignUpData) => {
 export const handleGetUser = async () => {
     const cookieStore = await cookies() // Await aqui
     const authCookie = cookieStore.get(process.env.NEXT_PUBLIC_AUTH_KEY as string)?.value
-    
-
 
     const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/users', {
         headers: {
             Authorization: `Bearer ${authCookie}`
         }
     })
-
+    console.log("esotu aqui")
     const jsonResponse = await response.json()
-    const userData = jsonResponse.user
+    console.log("jsonResponse", jsonResponse)
+    const userData = jsonResponse
+    console.log("userData", userData)
+    if(userData.statusCode === 500){
+        return null 
+    }else{
+       return userData as User 
+    }
 
-    if (userData) return userData as User
-
-    return null
 }
 
 export const handleSignOut = async () => {

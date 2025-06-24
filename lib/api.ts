@@ -12,7 +12,7 @@ type Props = {
     withAttachment?: boolean
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL + '/api/v1'
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export const api = async <TypeResponse>({
     endpoint,

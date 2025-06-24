@@ -3,94 +3,146 @@
 import { useState } from "react";
 import React from "react";
 import Link from "next/link";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from 'next/navigation'
+import { toast } from "sonner";
+import { handleSignIn } from "@/lib/server/auth";
+import { SignInData, signInSchema } from "@/lib/schemas/authSchemas";
+import { Form, FormField } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const SignInPage = () => {
 
+    const [loading, setLoading] = useState(false)
 
-    // Estados para armazenar as entradas do usuário
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const setUser = useAuthStore(state => state.setUser)
+    const router = useRouter()
 
-    // Função que é chamada quando o formulário é enviado
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const form = useForm<SignInData>({
+        resolver: zodResolver(signInSchema),
+        defaultValues: {
+            email: "",
+            password: ""
+        }
+    })
 
-        event.preventDefault();
+    const onSubmit = async (values: SignInData) => {
+        setLoading(true)
+        const response = await handleSignIn(values)
+        console.log(response.data)
+        if (response.error) {
+            console.log(response.error)
+            setLoading(false)
+            toast.error(response.error.message, { position: "bottom-right" })
 
-    };
+            return;
+        }
+
+        setUser(response.data.user)
+        toast.success('Autenticado com sucesso!', { position: "bottom-right" })
+
+        // Redirect to home
+        router.push("/projects");
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-200 px-4">
-            <form
-                // onSubmit={handleSubmit}
-                className="bg-gray-800 dark:bg-white shadow-xl rounded-xl p-8 w-full max-w-md transition-colors duration-200"
-            >
-                <h1 className="text-3xl font-bold text-center mb-6 text-white dark:text-gray-800">
-                    Login
-                </h1>
-
-                <div className="mb-4">
-                    <label htmlFor="username" className="block text-sm font-medium text-gray-300 dark:text-gray-700 mb-1">
-                        E-mail
-                    </label>
-                    <input
-                        id="username"
-                        type="email"
-                        placeholder="Digite seu e-mail"
-                        required
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-600 dark:border-gray-300 bg-gray-700 dark:bg-white text-white dark:text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
-                    />
-                </div>
-
-                <div className="mb-4">
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-300 dark:text-gray-700 mb-1">
-                        Senha
-                    </label>
-                    <input
-                        id="password"
-                        type="password"
-                        placeholder="Digite sua senha"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-600 dark:border-gray-300 bg-gray-700 dark:bg-white text-white dark:text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
-                    />
-                </div>
-
-                <div className="flex items-center justify-between mb-6">
-                    <label className="flex items-center space-x-2 text-sm text-gray-300 dark:text-gray-600">
-                        <input
-                            type="checkbox"
-                            className="rounded text-blue-600 focus:ring-blue-500 border-gray-500 dark:border-gray-300 bg-gray-700 dark:bg-white"
-                        />
-                        <span>Lembrar de mim</span>
-                    </label>
-                    <p>
-                        <Link href="/auth/retrieve"
-                            className="text-sm text-blue-400 dark:text-blue-600 hover:underline">
-                            Esqueceu sua senha?
-                        </Link>
-                    </p>
-                </div>
-
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-200"
+            <Form {...form}>
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="bg-gray-800 dark:bg-white shadow-xl rounded-xl p-8 w-full max-w-md transition-colors duration-200"
                 >
-                    Entrar
-                </button>
+                    <h1 className="text-3xl font-bold text-center mb-6 text-white dark:text-gray-800">
+                        Login
+                    </h1>
 
-                <div className="text-center mt-6 text-sm text-gray-300 dark:text-gray-600">
-                    <p>
-                        Não tem uma conta?{" "}
-                        <Link href="/auth/signup"
-                            className="text-blue-400 dark:text-blue-600 hover:underline font-medium">
-                            Registrar
-                        </Link>
-                    </p>
-                </div>
-            </form>
+                    <div className="space-y-3">
+                        {loading ?
+                            (
+                                [...Array(2)].map((_, key) => (
+                                    <Skeleton key={key} className="h-10 rounded-md" />
+                                ))
+                            )
+                            :
+                            <>
+
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <div className="mb-4">
+                                            <label htmlFor="username" className="block text-sm font-medium text-gray-300 dark:text-gray-700 mb-1">
+                                                E-mail
+                                            </label>
+                                            <input
+                                                type="email"
+                                                placeholder="Digite seu e-mail"
+                                                {...field}
+                                                className="w-full px-4 py-2 border border-gray-600 dark:border-gray-300 bg-gray-700 dark:bg-white text-white dark:text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
+                                            />
+                                        </div>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+
+                                        <div className="mb-4">
+                                            <label htmlFor="password" className="block text-sm font-medium text-gray-300 dark:text-gray-700 mb-1">
+                                                Senha
+                                            </label>
+                                            <input
+                                                type="password"
+                                                placeholder="Digite sua senha"
+                                                {...field}
+                                                className="w-full px-4 py-2 border border-gray-600 dark:border-gray-300 bg-gray-700 dark:bg-white text-white dark:text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
+                                            />
+                                        </div>
+                                    )}
+                                />
+                            </>}
+                    </div>
+
+                    <div className="flex items-center justify-between mb-6">
+                        <label className="flex items-center space-x-2 text-sm text-gray-300 dark:text-gray-600">
+                            <input
+                                type="checkbox"
+                                className="rounded text-blue-600 focus:ring-blue-500 border-gray-500 dark:border-gray-300 bg-gray-700 dark:bg-white"
+                            />
+                            <span>Lembrar de mim</span>
+                        </label>
+                        <p>
+                            <Link href="/auth/retrieve"
+                                className="text-sm text-blue-400 dark:text-blue-600 hover:underline">
+                                Esqueceu sua senha?
+                            </Link>
+                        </p>
+                    </div>
+
+                    {/* <button
+                        type="submit"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-200"
+                    >
+                        Entrar
+                    </button> */}
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-200" disabled={loading}>Entrar</Button>
+                    <div className="text-center mt-6 text-sm text-gray-300 dark:text-gray-600">
+                        <p>
+                            Não tem uma conta?{" "}
+                            <Link href="/auth/signup"
+                                className="text-blue-400 dark:text-blue-600 hover:underline font-medium">
+                                Registrar
+                            </Link>
+                        </p>
+                    </div>
+                </form>
+            </Form>
+
         </div>
     );
 }
