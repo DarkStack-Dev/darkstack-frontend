@@ -1,14 +1,14 @@
+export type UserRole = 'ADMIN' | 'USER' | 'MODERATOR' | 'GUEST';
 
 export type User = {
     id: string,
     // avatar: string,
     name: string,
     email: string,
-    roles: string[],
-    // last_access: string,
-    // is_superuser: boolean,
+    roles: UserRole[],
     createdAt: string,
-    updatedAt: string
+    updatedAt: string,
+    isActive: boolean,
 }
 
 export type APIUser = {

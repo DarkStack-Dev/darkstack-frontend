@@ -44,17 +44,18 @@ export const api = async <TypeResponse>({
             params: method == 'GET' && data,
             data: method != 'GET' && data
         })
-        
+        console.log("request =============", request.data)
         return {
             data: request.data
         }
     } catch (error) {
         const e = error as AxiosError<APIError>
-        
+        console.log("request", e)
+        console.log("request", e.response?.data.message)
         return {
             error: {
                 
-                message: e.response?.data.detail ?? 'Ocorreu um erro inesperado'
+                message: e.response?.data.message ?? 'Ocorreu um erro inesperadoaaaaa'
             }
         }
     }

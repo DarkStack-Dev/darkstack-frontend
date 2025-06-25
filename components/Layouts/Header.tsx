@@ -14,7 +14,7 @@ import { toast } from "sonner"
 // import Logo from "@/assets/frango.png"
 import Image from "next/image"
 import { Button } from "../ui/button"
-import { ChevronDown, Home, LogOut, Moon, Sun, User } from "lucide-react"
+import { ChevronDown, FileText, Home, LogOut, Moon, Settings, Shield, Sun, User, Users } from "lucide-react"
 // import MenuNavigation from "@/components/Layouts/MenuNavigation"
 import {
     DropdownMenu,
@@ -24,9 +24,22 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { usePermissions } from "@/hooks/usePermissions";
+import {NavigationMenuDemo} from "./MenuNavigation";
+import { ProtectedComponent } from "../ProtectedComponent";
+import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu";
 export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
     const { setTheme } = useTheme() // claro ou escuro
     const { user, clearUser } = useAuthStore()
+
+    const { 
+        showAdminMenu, 
+        showModeratorMenu, 
+        isAdmin, 
+        isModerator,
+        canManageUsers,
+        canViewReports 
+    } = usePermissions()
 
     const pathname = usePathname()
 
@@ -59,7 +72,7 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                         </Link>
                     </div> */}
                     {/* <div className="hidden min-[480px]:block">
-                        <MenuNavigation />
+                        <NavigationMenuDemo />
                     </div> */}
 
                     <Button className="flex min-[480px]:hidden">
@@ -67,6 +80,22 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                             <Home className="size-[1.2rem]" />
                         </Link>
                     </Button>
+
+                    {/* Menu de navegação principal - só aparece para usuários logados */}
+                    {user && (
+                        <div className="hidden min-[480px]:flex items-center gap-4 ml-4">
+                            <Link href="/projects" className="hover:underline">
+                                Projetos
+                            </Link>
+                            
+                            {/* Menu de Moderação */}
+                            <ProtectedComponent roles={['ADMIN', 'MODERATOR']}>
+                                <Link href="/moderator" className="hover:underline">
+                                    Moderação
+                                </Link>
+                            </ProtectedComponent>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-6">
@@ -103,6 +132,62 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                         </DropdownMenuContent>
                     </DropdownMenu>
 
+                    {/* Menu Admin - só aparece para ADMINs */}
+                    <ProtectedComponent roles={['ADMIN']}>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm" className="gap-2">
+                                    <Settings className="size-4" />
+                                    <span className="hidden sm:inline">Admin</span>
+                                    <ChevronDown className="size-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuLabel>Administração</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                
+                                <Link href="/admin">
+                                    <DropdownMenuItem>
+                                        <Shield className="mr-2 size-4" />
+                                        Dashboard
+                                    </DropdownMenuItem>
+                                </Link>
+                                
+                                {canManageUsers() && (
+                                    <Link href="/admin/users">
+                                        <DropdownMenuItem>
+                                            <Users className="mr-2 size-4" />
+                                            Gerenciar Usuários
+                                        </DropdownMenuItem>
+                                    </Link>
+                                )}
+                                
+                                <Link href="/admin/settings">
+                                    <DropdownMenuItem>
+                                        <Settings className="mr-2 size-4" />
+                                        Configurações
+                                    </DropdownMenuItem>
+                                </Link>
+
+                                {canViewReports() && (
+                                    <Link href="/admin/reports">
+                                        <DropdownMenuItem>
+                                            <FileText className="mr-2 size-4" />
+                                            Relatórios
+                                        </DropdownMenuItem>
+                                    </Link>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </ProtectedComponent>
+
+                    {/* Badge de Role */}
+                    {(isAdmin() || isModerator()) && (
+                        <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded hidden sm:inline">
+                            {isAdmin() ? 'ADMIN' : 'MODERATOR'}
+                        </span>
+                    )}
+
                     {user &&
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -112,7 +197,7 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                                 >
                                     <Avatar className="size-7">
                                         <AvatarImage
-                                            src={user?.avatar}
+                                            src={user?.name}
                                             alt={user?.name}
                                         />
                                         <AvatarFallback>{user?.name?.slice(0, 2)}</AvatarFallback>

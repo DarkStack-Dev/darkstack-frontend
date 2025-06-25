@@ -1,3 +1,5 @@
 export type APIError = {
-    detail: string
+    statusCode: number;
+    timestamp: string;
+    message: string;
 }

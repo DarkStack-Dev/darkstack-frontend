@@ -21,7 +21,7 @@ export const signIn = async (data: SignInData) => {
 
 export const signUp = async (data: SignUpData) => {
     return await api<APISignUp>({
-        endpoint: 'accounts/signup',
+        endpoint: 'users/signup',
         method: 'POST',
         withAuth: false,
         data
