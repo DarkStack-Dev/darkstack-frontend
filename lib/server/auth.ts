@@ -54,7 +54,7 @@ export const handleGetUser = async () => {
     console.log("jsonResponse", jsonResponse)
     const userData = jsonResponse
     console.log("userData", userData)
-    if(userData.statusCode === 401){
+    if(userData.statusCode === 401 || userData.statusCode === 404){
         return null 
     }else{
        return userData as User 
