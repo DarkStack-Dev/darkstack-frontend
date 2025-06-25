@@ -8,8 +8,9 @@ import { redirect } from "next/navigation";
 
 export const handleSignIn = async (data: SignInData) => {
     const response = await signIn(data)
-
+    console.log("response.data aaaaaaaaaaaa", response)
     if (response.data) {
+        console.log("response.data", response.data)
         const cookieStore = await cookies() // Await aqui
         cookieStore.set({
             name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
@@ -25,7 +26,7 @@ export const handleSignIn = async (data: SignInData) => {
 // isso é para fazer login automaticamente após fazer a conta
 export const handleSignUp = async (data: SignUpData) => {
     const response = await signUp(data)
-
+    console.log("response bbbbbbbbbbb", response)
     if (response.data) {
         const cookieStore = await cookies() // Await aqui
         cookieStore.set({
@@ -53,7 +54,7 @@ export const handleGetUser = async () => {
     console.log("jsonResponse", jsonResponse)
     const userData = jsonResponse
     console.log("userData", userData)
-    if(userData.statusCode === 500){
+    if(userData.statusCode === 401){
         return null 
     }else{
        return userData as User 

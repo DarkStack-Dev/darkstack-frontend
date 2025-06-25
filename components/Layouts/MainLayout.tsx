@@ -17,14 +17,25 @@ type Props = {
 }
 
 export const MainLayout = ({ user, children }: Props) => {
-    const auth = useAuthStore();
+    // const auth = useAuthStore();
     const [loading, setLoading] = useState(true);
     const pathname = usePathname();
 
+    // useEffect(() => {
+    //     if (user) auth.setUser(user);
+    //     setLoading(false);
+    // }, [user]);
+
+    const { setUser, clearUser } = useAuthStore()
+
     useEffect(() => {
-        if (user) auth.setUser(user);
+        if (user) {
+            setUser(user)
+        } else {
+            clearUser()
+        }
         setLoading(false);
-    }, [user]);
+    }, [user, setUser, clearUser])
 
     if (loading) {
         return (
@@ -37,13 +48,13 @@ export const MainLayout = ({ user, children }: Props) => {
     // Renderização do layout com o Sidebar
     return (
         <div className="mt-[3rem] relative overflow-hidden bg-slate-200 dark:bg-slate-950">
-            {auth.user && !pathname.includes("auth") ? (
+            {user && !pathname.includes("auth") ? (
                 <SidebarProvider>
                     <AppSidebar className="mt-[3rem] h-[calc(100vh-3rem)]" />
                     
                     <div className="flex-1">
                         {/* Coloca o SidebarTrigger dentro do Header */}
-                        <Header withSidebarTrigger />
+                        <Header withSidebarTrigger={true} />
                         <div>
                             <main >
                                 {children}
