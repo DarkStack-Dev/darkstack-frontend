@@ -54,4 +54,109 @@ export const resetUser = async (data: { password: string }, uidb64: string | str
     });
 };
 
+// GitHub Auth Types
+export type GitHubStartAuthResponse = {
+    authorizationUrl: string;
+}
 
+export type GitHubCallbackData = {
+    code: string;
+    state?: string;
+}
+
+export type GitHubCallbackResponse = {
+    authToken: string;
+    refreshToken: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        roles: string[];
+        isNewUser: boolean;
+    };
+}
+
+export type GitHubLinkData = {
+    code: string;
+}
+
+export type GitHubLinkResponse = {
+    success: boolean;
+    githubAccount: {
+        id: string;
+        username: string;
+        bio?: string;
+    };
+}
+
+export type UserProvidersResponse = {
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        roles: string[];
+        avatar?: string;
+        createdAt: Date;
+        updatedAt: Date;
+    };
+    providers: {
+        email: {
+            hasPassword: boolean;
+            verified: boolean;
+        };
+        github?: {
+            id: string;
+            username: string;
+            bio?: string;
+            publicRepos: number;
+            followers: number;
+            following: number;
+            lastSyncAt: Date;
+        };
+        google?: {
+            id: string;
+            email: string;
+        };
+    };
+}
+
+/* GitHub Auth Functions */
+export const startGitHubAuth = async (state?: string) => {
+    return await api<GitHubStartAuthResponse>({
+        endpoint: 'auth/github/start',
+        method: 'POST',
+        withAuth: false,
+        data: { state }
+    })
+}
+
+export const gitHubCallback = async (data: GitHubCallbackData) => {
+    return await api<GitHubCallbackResponse>({
+        endpoint: 'auth/github/callback',
+        method: 'POST',
+        withAuth: false,
+        data
+    })
+}
+
+export const linkGitHubAccount = async (data: GitHubLinkData) => {
+    return await api<GitHubLinkResponse>({
+        endpoint: 'auth/github/link',
+        method: 'POST',
+        data
+    })
+}
+
+export const unlinkGitHubAccount = async () => {
+    return await api<{ success: boolean }>({
+        endpoint: 'auth/github/unlink',
+        method: 'DELETE'
+    })
+}
+
+export const getUserProviders = async () => {
+    return await api<UserProvidersResponse>({
+        endpoint: 'users/providers',
+        method: 'GET'
+    })
+}

@@ -36,8 +36,10 @@ export async function middleware(request: NextRequest) {
         '/auth/signup', 
         '/auth/recover', 
         '/auth/retrieve', 
+        '/auth/github/callback', 
         '/auth/reset',
         '/sobrenos',
+        '/api/auth/github',
     ];
 
     if (publicPaths.includes(pathname)) {

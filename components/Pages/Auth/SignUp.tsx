@@ -1,3 +1,4 @@
+// components/Pages/Auth/SignUp.tsx - Versão atualizada
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -19,6 +20,7 @@ import { useAuthStore } from "@/store/authStore";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { GitHubButton } from "@/components/ui/GitHubButton";
 
 export const SignUpPage = () => {
     const [loading, setLoading] = useState(false)
@@ -43,7 +45,6 @@ export const SignUpPage = () => {
         if (response.error) {
             setLoading(false)
             toast.error(response.error.message, { position: "bottom-right" })
-
             return;
         }
 
@@ -52,6 +53,7 @@ export const SignUpPage = () => {
 
         router.push("/auth/signin");
     }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-200 px-4">
             <Form {...form}>
@@ -62,13 +64,35 @@ export const SignUpPage = () => {
                     <h1 className="text-3xl font-bold text-center mb-6 text-white dark:text-gray-800">
                         Criar Conta
                     </h1>
+
+                    {/* GitHub Signup Button */}
+                    <div className="mb-6">
+                        <GitHubButton 
+                            text="Criar conta com GitHub"
+                            variant="outline"
+                            className="bg-gray-700 dark:bg-gray-100 border-gray-600 dark:border-gray-300 text-white dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-200"
+                            state="signup"
+                        />
+                    </div>
+
+                    {/* Divider */}
+                    <div className="relative mb-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-600 dark:border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-gray-800 dark:bg-white text-gray-400 dark:text-gray-600">
+                                ou crie com email
+                            </span>
+                        </div>
+                    </div>
+
                     {loading ?
                         (
                             [...Array(3)].map((_, key) => (
                                 <>
                                     <Skeleton key={key} className="h-10 rounded-md mb-12" />
                                 </>
-
                             ))
                         )
                         :
@@ -136,17 +160,6 @@ export const SignUpPage = () => {
                             />
                         </>
                     }
-                    {/* <div className="mb-4">
-                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 dark:text-gray-700 mb-1">
-                            Confirmar Senha
-                        </label>
-                        <input
-                            id="confirmPassword"
-                            type="password"
-                            placeholder="Confirme sua senha"
-                            className="w-full px-4 py-2 border border-gray-600 dark:border-gray-300 bg-gray-700 dark:bg-white text-white dark:text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500"
-                        />
-                        </div> */}
 
                     <div className="mb-4 flex items-start gap-2 text-sm text-gray-300 dark:text-gray-600">
                         <input
@@ -202,9 +215,7 @@ export const SignUpPage = () => {
                         </p>
                     </div>
                 </form>
-
             </Form>
-
         </div>
     );
 };
