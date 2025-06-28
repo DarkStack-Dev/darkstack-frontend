@@ -1,3 +1,4 @@
+// components/Pages/Auth/SignIn.tsx - Versão atualizada
 "use client";
 
 import { useState } from "react";
@@ -13,9 +14,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GitHubButton } from "@/components/ui/GitHubButton";
 
 export const SignInPage = () => {
-
     const [loading, setLoading] = useState(false)
 
     const setUser = useAuthStore(state => state.setUser)
@@ -37,7 +38,6 @@ export const SignInPage = () => {
             console.log(response.error)
             setLoading(false)
             toast.error(response.error.message, { position: "bottom-right" })
-
             return;
         }
 
@@ -59,6 +59,28 @@ export const SignInPage = () => {
                         Login
                     </h1>
 
+                    {/* GitHub Login Button */}
+                    <div className="mb-6">
+                        <GitHubButton 
+                            text="Entrar com GitHub"
+                            variant="outline"
+                            className="bg-gray-700 dark:bg-gray-100 border-gray-600 dark:border-gray-300 text-white dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-200"
+                            state="login"
+                        />
+                    </div>
+
+                    {/* Divider */}
+                    <div className="relative mb-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-600 dark:border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-gray-800 dark:bg-white text-gray-400 dark:text-gray-600">
+                                ou continue com email
+                            </span>
+                        </div>
+                    </div>
+
                     <div className="space-y-3">
                         {loading ?
                             (
@@ -68,7 +90,6 @@ export const SignInPage = () => {
                             )
                             :
                             <>
-
                                 <FormField
                                     control={form.control}
                                     name="email"
@@ -91,7 +112,6 @@ export const SignInPage = () => {
                                     control={form.control}
                                     name="password"
                                     render={({ field }) => (
-
                                         <div className="mb-4">
                                             <label htmlFor="password" className="block text-sm font-medium text-gray-300 dark:text-gray-700 mb-1">
                                                 Senha
@@ -124,13 +144,13 @@ export const SignInPage = () => {
                         </p>
                     </div>
 
-                    {/* <button
-                        type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-200"
+                    <Button 
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-200" 
+                        disabled={loading}
                     >
                         Entrar
-                    </button> */}
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-200" disabled={loading}>Entrar</Button>
+                    </Button>
+                    
                     <div className="text-center mt-6 text-sm text-gray-300 dark:text-gray-600">
                         <p>
                             Não tem uma conta?{" "}
@@ -142,7 +162,6 @@ export const SignInPage = () => {
                     </div>
                 </form>
             </Form>
-
         </div>
     );
 }

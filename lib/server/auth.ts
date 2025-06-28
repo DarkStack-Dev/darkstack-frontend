@@ -5,6 +5,8 @@ import {  signIn, signUp } from "@/lib/requests";
 import { SignInData, SignUpData } from "@/lib/schemas/authSchemas";
 import { User } from "@/types/accounts/user";
 import { redirect } from "next/navigation";
+import { startGitHubAuth, gitHubCallback, linkGitHubAccount, unlinkGitHubAccount } from "@/lib/requests";
+import { GitHubCallbackData, GitHubLinkData } from "@/lib/requests";
 
 export const handleSignIn = async (data: SignInData) => {
     const response = await signIn(data)
@@ -66,4 +68,33 @@ export const handleSignOut = async () => {
     const cookieStore = await cookies() // Await aqui
     cookieStore.delete(process.env.NEXT_PUBLIC_AUTH_KEY as string)
     redirect('/')
+}
+
+/* GitHub Auth Server Actions */
+export const handleGitHubStart = async (state?: string) => {
+    return await startGitHubAuth(state);
+}
+
+export const handleGitHubCallback = async (data: GitHubCallbackData) => {
+    const response = await gitHubCallback(data);
+    
+    if (response.data) {
+        const cookieStore = await cookies();
+        cookieStore.set({
+            name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
+            value: response.data.authToken,
+            httpOnly: true,
+            maxAge: 86400 * 7 // 7 days
+        });
+    }
+    
+    return response;
+}
+
+export const handleGitHubLink = async (data: GitHubLinkData) => {
+    return await linkGitHubAccount(data);
+}
+
+export const handleGitHubUnlink = async () => {
+    return await unlinkGitHubAccount();
 }
