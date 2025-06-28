@@ -1,3 +1,5 @@
+// lib/server/auth.ts - MELHORAR LOGGING
+
 "use server";
 
 import { cookies } from "next/headers";
@@ -25,7 +27,6 @@ export const handleSignIn = async (data: SignInData) => {
     return response
 }
 
-// isso é para fazer login automaticamente após fazer a conta
 export const handleSignUp = async (data: SignUpData) => {
     const response = await signUp(data)
     console.log("response bbbbbbbbbbb", response)
@@ -72,23 +73,54 @@ export const handleSignOut = async () => {
 
 /* GitHub Auth Server Actions */
 export const handleGitHubStart = async (state?: string) => {
-    return await startGitHubAuth(state);
+    console.log('🚀 [Server Action] Starting GitHub auth...', { state });
+    const response = await startGitHubAuth(state);
+    console.log('📤 [Server Action] GitHub start response:', { 
+        hasError: !!response.error,
+        hasData: !!response.data,
+        url: response.data?.authorizationUrl ? 'URL gerada' : 'Sem URL'
+    });
+    return response;
 }
 
 export const handleGitHubCallback = async (data: GitHubCallbackData) => {
-    const response = await gitHubCallback(data);
+    console.log('🔄 [Server Action] Processing GitHub callback...', {
+        hasCode: !!data.code,
+        codeLength: data.code?.length,
+        state: data.state
+    });
     
-    if (response.data) {
-        const cookieStore = await cookies();
-        cookieStore.set({
-            name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
-            value: response.data.authToken,
-            httpOnly: true,
-            maxAge: 86400 * 7 // 7 days
+    try {
+        const response = await gitHubCallback(data);
+        
+        console.log('📥 [Server Action] GitHub callback response:', {
+            hasError: !!response.error,
+            hasData: !!response.data,
+            errorMessage: response.error?.message,
+            userEmail: response.data?.user?.email || 'N/A'
         });
+        
+        if (response.data) {
+            console.log('🍪 [Server Action] Setting auth cookie...');
+            const cookieStore = await cookies();
+            cookieStore.set({
+                name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
+                value: response.data.authToken,
+                httpOnly: true,
+                maxAge: 86400 * 7 // 7 days
+            });
+            console.log('✅ [Server Action] Auth cookie set successfully');
+        }
+        
+        return response;
+    } catch (error) {
+        console.error('💥 [Server Action] GitHub callback error:', error);
+        return {
+            error: {
+                message: 'Erro interno no servidor durante autenticação GitHub'
+            }
+        };
     }
-    
-    return response;
 }
 
 export const handleGitHubLink = async (data: GitHubLinkData) => {

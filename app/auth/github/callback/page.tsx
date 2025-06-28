@@ -1,4 +1,5 @@
-// app/auth/github/callback/page.tsx
+// app/auth/github/callback/page.tsx - VERIFICAR POSSÍVEIS PROBLEMAS
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,19 +12,38 @@ import { BarLoader } from 'react-spinners';
 export default function GitHubCallbackPage() {
     const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
     const [message, setMessage] = useState('Processando autenticação...');
+    const [processed, setProcessed] = useState(false); // ✅ Previne execução dupla
     
     const router = useRouter();
     const searchParams = useSearchParams();
     const setUser = useAuthStore(state => state.setUser);
 
     useEffect(() => {
+        // ✅ Previne execução dupla
+        if (processed) {
+            console.log('⚠️ Callback já foi processado, ignorando...');
+            return;
+        }
+
         const processCallback = async () => {
+            console.log('🚀 Iniciando processamento do callback...');
+            setProcessed(true); // ✅ Marca como processado imediatamente
+            
             const code = searchParams.get('code');
             const state = searchParams.get('state');
             const error = searchParams.get('error');
 
+            console.log('📍 Callback params:', { 
+                hasCode: !!code, 
+                hasState: !!state, 
+                hasError: !!error,
+                code: code?.substring(0, 10) + '...', // Log parcial por segurança
+                state 
+            });
+
             // Se houve erro no GitHub
             if (error) {
+                console.log('❌ GitHub OAuth Error:', error);
                 setStatus('error');
                 setMessage('Acesso negado pelo GitHub');
                 toast.error('Autenticação cancelada', { position: "bottom-right" });
@@ -36,6 +56,7 @@ export default function GitHubCallbackPage() {
 
             // Se não tem código, erro
             if (!code) {
+                console.log('❌ No authorization code found');
                 setStatus('error');
                 setMessage('Código de autorização não encontrado');
                 toast.error('Erro na autenticação', { position: "bottom-right" });
@@ -49,12 +70,24 @@ export default function GitHubCallbackPage() {
             try {
                 setMessage('Finalizando autenticação...');
                 
+                console.log('📤 Enviando código para backend...', {
+                    codeLength: code.length,
+                    state: state || 'undefined'
+                });
+                
                 const response = await handleGitHubCallback({ 
                     code, 
                     state: state || undefined 
                 });
 
+                console.log('📥 Resposta do backend:', {
+                    hasError: !!response.error,
+                    hasData: !!response.data,
+                    errorMessage: response.error?.message
+                });
+
                 if (response.error) {
+                    console.log('❌ Erro do backend:', response.error);
                     setStatus('error');
                     setMessage(response.error.message);
                     toast.error(response.error.message, { position: "bottom-right" });
@@ -66,6 +99,11 @@ export default function GitHubCallbackPage() {
                 }
 
                 if (response.data) {
+                    console.log('✅ Autenticação bem-sucedida:', {
+                        userId: response.data.user.id,
+                        isNewUser: response.data.user.isNewUser
+                    });
+                    
                     setStatus('success');
                     setMessage('Autenticação realizada com sucesso!');
                     
@@ -92,7 +130,7 @@ export default function GitHubCallbackPage() {
                     }, 2000);
                 }
             } catch (error) {
-                console.error('Erro no callback GitHub:', error);
+                console.error('💥 Erro no callback GitHub:', error);
                 setStatus('error');
                 setMessage('Erro interno no processamento');
                 toast.error('Erro interno', { position: "bottom-right" });
@@ -104,7 +142,7 @@ export default function GitHubCallbackPage() {
         };
 
         processCallback();
-    }, [searchParams, router, setUser]);
+    }, [searchParams, router, setUser, processed]); // ✅ Adicionar processed nas deps
 
     const getStatusColor = () => {
         switch (status) {
@@ -151,6 +189,14 @@ export default function GitHubCallbackPage() {
                     {status === 'success' && 'Redirecionando...'}
                     {status === 'error' && 'Redirecionando para login...'}
                 </div>
+                
+                {/* ✅ Debug info em desenvolvimento */}
+                {process.env.NODE_ENV === 'development' && (
+                    <div className="mt-4 text-xs text-gray-400 border-t pt-2">
+                        <p>Debug: Processed = {processed.toString()}</p>
+                        <p>Code: {searchParams.get('code')?.substring(0, 10)}...</p>
+                    </div>
+                )}
             </div>
         </div>
     );
