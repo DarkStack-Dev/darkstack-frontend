@@ -1,8 +1,7 @@
-// app/auth/github/callback/page.tsx - VERIFICAR POSSÍVEIS PROBLEMAS
-
+// app/auth/github/callback/page.tsx - CORRIGIDO
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { handleGitHubCallback } from "@/lib/server/auth";
@@ -12,7 +11,7 @@ import { BarLoader } from 'react-spinners';
 export default function GitHubCallbackPage() {
     const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
     const [message, setMessage] = useState('Processando autenticação...');
-    const [processed, setProcessed] = useState(false); // ✅ Previne execução dupla
+    const hasProcessed = useRef(false); // ✅ Previne execução dupla
     
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -20,30 +19,28 @@ export default function GitHubCallbackPage() {
 
     useEffect(() => {
         // ✅ Previne execução dupla
-        if (processed) {
-            console.log('⚠️ Callback já foi processado, ignorando...');
+        if (hasProcessed.current) {
+            console.log('⚠️ Callback já processado, ignorando...');
             return;
         }
 
         const processCallback = async () => {
-            console.log('🚀 Iniciando processamento do callback...');
-            setProcessed(true); // ✅ Marca como processado imediatamente
-            
+            console.log('🚀 [Frontend] Iniciando processamento do callback...');
+            hasProcessed.current = true; // ✅ Marca como processado
+
             const code = searchParams.get('code');
             const state = searchParams.get('state');
             const error = searchParams.get('error');
 
-            console.log('📍 Callback params:', { 
-                hasCode: !!code, 
-                hasState: !!state, 
-                hasError: !!error,
-                code: code?.substring(0, 10) + '...', // Log parcial por segurança
-                state 
+            console.log('📝 [Frontend] Parâmetros recebidos:', {
+                hasCode: !!code,
+                hasState: !!state,
+                hasError: !!error
             });
 
             // Se houve erro no GitHub
             if (error) {
-                console.log('❌ GitHub OAuth Error:', error);
+                console.log('❌ [Frontend] Erro do GitHub:', error);
                 setStatus('error');
                 setMessage('Acesso negado pelo GitHub');
                 toast.error('Autenticação cancelada', { position: "bottom-right" });
@@ -56,7 +53,7 @@ export default function GitHubCallbackPage() {
 
             // Se não tem código, erro
             if (!code) {
-                console.log('❌ No authorization code found');
+                console.log('❌ [Frontend] Código não encontrado');
                 setStatus('error');
                 setMessage('Código de autorização não encontrado');
                 toast.error('Erro na autenticação', { position: "bottom-right" });
@@ -69,25 +66,15 @@ export default function GitHubCallbackPage() {
 
             try {
                 setMessage('Finalizando autenticação...');
-                
-                console.log('📤 Enviando código para backend...', {
-                    codeLength: code.length,
-                    state: state || 'undefined'
-                });
+                console.log('📤 [Frontend] Enviando código para o backend...');
                 
                 const response = await handleGitHubCallback({ 
                     code, 
                     state: state || undefined 
                 });
 
-                console.log('📥 Resposta do backend:', {
-                    hasError: !!response.error,
-                    hasData: !!response.data,
-                    errorMessage: response.error?.message
-                });
-
                 if (response.error) {
-                    console.log('❌ Erro do backend:', response.error);
+                    console.log('❌ [Frontend] Erro do backend:', response.error.message);
                     setStatus('error');
                     setMessage(response.error.message);
                     toast.error(response.error.message, { position: "bottom-right" });
@@ -99,11 +86,12 @@ export default function GitHubCallbackPage() {
                 }
 
                 if (response.data) {
-                    console.log('✅ Autenticação bem-sucedida:', {
+                    console.log('✅ [Frontend] Sucesso do backend:', {
                         userId: response.data.user.id,
+                        email: response.data.user.email,
                         isNewUser: response.data.user.isNewUser
                     });
-                    
+
                     setStatus('success');
                     setMessage('Autenticação realizada com sucesso!');
                     
@@ -130,7 +118,7 @@ export default function GitHubCallbackPage() {
                     }, 2000);
                 }
             } catch (error) {
-                console.error('💥 Erro no callback GitHub:', error);
+                console.error('💥 [Frontend] Erro no callback GitHub:', error);
                 setStatus('error');
                 setMessage('Erro interno no processamento');
                 toast.error('Erro interno', { position: "bottom-right" });
@@ -142,7 +130,7 @@ export default function GitHubCallbackPage() {
         };
 
         processCallback();
-    }, [searchParams, router, setUser, processed]); // ✅ Adicionar processed nas deps
+    }, []); // ✅ Array vazio - executa apenas uma vez
 
     const getStatusColor = () => {
         switch (status) {
@@ -189,14 +177,6 @@ export default function GitHubCallbackPage() {
                     {status === 'success' && 'Redirecionando...'}
                     {status === 'error' && 'Redirecionando para login...'}
                 </div>
-                
-                {/* ✅ Debug info em desenvolvimento */}
-                {process.env.NODE_ENV === 'development' && (
-                    <div className="mt-4 text-xs text-gray-400 border-t pt-2">
-                        <p>Debug: Processed = {processed.toString()}</p>
-                        <p>Code: {searchParams.get('code')?.substring(0, 10)}...</p>
-                    </div>
-                )}
             </div>
         </div>
     );

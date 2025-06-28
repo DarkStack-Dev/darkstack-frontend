@@ -74,6 +74,7 @@ export type GitHubCallbackResponse = {
         roles: string[];
         isNewUser: boolean;
     };
+
 }
 
 export type GitHubLinkData = {
@@ -120,7 +121,18 @@ export type UserProvidersResponse = {
     };
 }
 
-/* GitHub Auth Functions */
+
+
+
+
+
+
+
+// lib/requests.ts - Adicionar função gitHubCallback
+
+// ... (manter todas as outras funções existentes)
+
+/* GitHub Auth Functions - CORRIGIDAS */
 export const startGitHubAuth = async (state?: string) => {
     return await api<GitHubStartAuthResponse>({
         endpoint: 'auth/github/start',
@@ -130,7 +142,13 @@ export const startGitHubAuth = async (state?: string) => {
     })
 }
 
+// ✅ CORRIGIDO: Nova função que chama o backend NestJS
 export const gitHubCallback = async (data: GitHubCallbackData) => {
+    console.log('📤 [Frontend] Sending to backend:', {
+        hasCode: !!data.code,
+        hasState: !!data.state
+    });
+    
     return await api<GitHubCallbackResponse>({
         endpoint: 'auth/github/callback',
         method: 'POST',

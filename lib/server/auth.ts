@@ -1,13 +1,12 @@
-// lib/server/auth.ts - MELHORAR LOGGING
-
+// lib/server/auth.ts - CORRIGIDO
 "use server";
 
 import { cookies } from "next/headers";
-import {  signIn, signUp } from "@/lib/requests";
+import { signIn, signUp, gitHubCallback } from "@/lib/requests";
 import { SignInData, SignUpData } from "@/lib/schemas/authSchemas";
 import { User } from "@/types/accounts/user";
 import { redirect } from "next/navigation";
-import { startGitHubAuth, gitHubCallback, linkGitHubAccount, unlinkGitHubAccount } from "@/lib/requests";
+import { startGitHubAuth, linkGitHubAccount, unlinkGitHubAccount } from "@/lib/requests";
 import { GitHubCallbackData, GitHubLinkData } from "@/lib/requests";
 
 export const handleSignIn = async (data: SignInData) => {
@@ -15,7 +14,7 @@ export const handleSignIn = async (data: SignInData) => {
     console.log("response.data aaaaaaaaaaaa", response)
     if (response.data) {
         console.log("response.data", response.data)
-        const cookieStore = await cookies() // Await aqui
+        const cookieStore = await cookies()
         cookieStore.set({
             name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
             value: response.data.authToken,
@@ -31,7 +30,7 @@ export const handleSignUp = async (data: SignUpData) => {
     const response = await signUp(data)
     console.log("response bbbbbbbbbbb", response)
     if (response.data) {
-        const cookieStore = await cookies() // Await aqui
+        const cookieStore = await cookies()
         cookieStore.set({
             name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
             value: response.data.authToken,
@@ -44,7 +43,7 @@ export const handleSignUp = async (data: SignUpData) => {
 }
 
 export const handleGetUser = async () => {
-    const cookieStore = await cookies() // Await aqui
+    const cookieStore = await cookies()
     const authCookie = cookieStore.get(process.env.NEXT_PUBLIC_AUTH_KEY as string)?.value
 
     const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/users', {
@@ -62,65 +61,37 @@ export const handleGetUser = async () => {
     }else{
        return userData as User 
     }
-
 }
 
 export const handleSignOut = async () => {
-    const cookieStore = await cookies() // Await aqui
+    const cookieStore = await cookies()
     cookieStore.delete(process.env.NEXT_PUBLIC_AUTH_KEY as string)
     redirect('/')
 }
 
-/* GitHub Auth Server Actions */
+/* GitHub Auth Server Actions - CORRIGIDOS */
 export const handleGitHubStart = async (state?: string) => {
-    console.log('🚀 [Server Action] Starting GitHub auth...', { state });
-    const response = await startGitHubAuth(state);
-    console.log('📤 [Server Action] GitHub start response:', { 
-        hasError: !!response.error,
-        hasData: !!response.data,
-        url: response.data?.authorizationUrl ? 'URL gerada' : 'Sem URL'
-    });
-    return response;
+    return await startGitHubAuth(state);
 }
 
+// ✅ CORRIGIDO: Chama apenas o backend NestJS
 export const handleGitHubCallback = async (data: GitHubCallbackData) => {
-    console.log('🔄 [Server Action] Processing GitHub callback...', {
-        hasCode: !!data.code,
-        codeLength: data.code?.length,
-        state: data.state
-    });
+    console.log('🔄 [Frontend] Calling backend with code:', data.code ? 'Present' : 'Missing');
     
-    try {
-        const response = await gitHubCallback(data);
-        
-        console.log('📥 [Server Action] GitHub callback response:', {
-            hasError: !!response.error,
-            hasData: !!response.data,
-            errorMessage: response.error?.message,
-            userEmail: response.data?.user?.email || 'N/A'
+    const response = await gitHubCallback(data);
+    
+    if (response.data) {
+        console.log('✅ [Frontend] Backend returned success, setting cookie...');
+        const cookieStore = await cookies();
+        cookieStore.set({
+            name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
+            value: response.data.authToken,
+            httpOnly: true,
+            maxAge: 86400 * 7 // 7 days
         });
-        
-        if (response.data) {
-            console.log('🍪 [Server Action] Setting auth cookie...');
-            const cookieStore = await cookies();
-            cookieStore.set({
-                name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
-                value: response.data.authToken,
-                httpOnly: true,
-                maxAge: 86400 * 7 // 7 days
-            });
-            console.log('✅ [Server Action] Auth cookie set successfully');
-        }
-        
-        return response;
-    } catch (error) {
-        console.error('💥 [Server Action] GitHub callback error:', error);
-        return {
-            error: {
-                message: 'Erro interno no servidor durante autenticação GitHub'
-            }
-        };
     }
+    
+    return response;
 }
 
 export const handleGitHubLink = async (data: GitHubLinkData) => {
