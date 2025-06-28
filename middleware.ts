@@ -35,6 +35,7 @@ export async function middleware(request: NextRequest) {
         '/auth/signin', 
         '/auth/signup', 
         '/auth/recover', 
+        '/auth/retrieve', 
         '/auth/reset',
         '/sobrenos',
     ];

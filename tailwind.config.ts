@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-	// darkMode: ["class"],
+	darkMode: "class",
 	content: [
 		"./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,8 +10,8 @@ const config: Config = {
 	theme: {
 		extend: {
 			colors: {
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
+				// background: 'hsl(var(--background))',
+				// foreground: 'hsl(var(--foreground))',
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
@@ -24,18 +24,18 @@ const config: Config = {
 					DEFAULT: 'hsl(var(--muted))',
 					foreground: 'hsl(var(--muted-foreground))'
 				},
-				primary: {
-					DEFAULT: "#8B5CF6",
-					foreground: "#FFFFFF",
-				},
-				secondary: {
-					DEFAULT: "#F2FCE2",
-					foreground: "#1A1A1A",
-				},
-				accent: {
-					DEFAULT: "#33C3F0",
-					foreground: "#FFFFFF",
-				},
+				// primary: {
+				// 	DEFAULT: "#8B5CF6",
+				// 	foreground: "#FFFFFF",
+				// },
+				// secondary: {
+				// 	DEFAULT: "#F2FCE2",
+				// 	foreground: "#1A1A1A",
+				// },
+				// accent: {
+				// 	DEFAULT: "#33C3F0",
+				// 	foreground: "#FFFFFF",
+				// },
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
@@ -91,6 +91,23 @@ const config: Config = {
 			},
 		}
 	},
-	// plugins: [require("tailwindcss-animate")],
+	plugins: [require("tailwindcss-animate")],
 };
 export default config;
+
+
+
+
+// import type { Config } from "tailwindcss";
+
+// const config: Config = {
+// 	content: [
+// 		"./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+// 		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+// 		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+// 	],
+// 	// No v4, a maior parte da config vai no CSS via @theme
+// 	// Config file é mais simples
+// };
+
+// export default config;

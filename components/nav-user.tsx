@@ -50,8 +50,8 @@ export function NavUser(
 
   // const { user, clearUser } = useAuthStore()
 
-  const userName = "Felipe Chagas";
-  const userEmail = "felypegt@gmail.com"
+  const userName = "xxxxxxxxx";
+  const userEmail = "xxxxxxxxxxxxx"
   
   const handleLogOut = () => {
     // handleSignOut() // usar a função SignOut para remover o access do cookies
