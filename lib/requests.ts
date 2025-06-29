@@ -74,6 +74,7 @@ export type GitHubCallbackResponse = {
         roles: string[];
         isNewUser: boolean;
     };
+
 }
 
 export type GitHubLinkData = {
@@ -120,7 +121,18 @@ export type UserProvidersResponse = {
     };
 }
 
-/* GitHub Auth Functions */
+
+
+
+
+
+
+
+// lib/requests.ts - Adicionar função gitHubCallback
+
+// ... (manter todas as outras funções existentes)
+
+/* GitHub Auth Functions - CORRIGIDAS */
 export const startGitHubAuth = async (state?: string) => {
     return await api<GitHubStartAuthResponse>({
         endpoint: 'auth/github/start',
@@ -130,7 +142,13 @@ export const startGitHubAuth = async (state?: string) => {
     })
 }
 
+// ✅ CORRIGIDO: Nova função que chama o backend NestJS
 export const gitHubCallback = async (data: GitHubCallbackData) => {
+    console.log('📤 [Frontend] Sending to backend:', {
+        hasCode: !!data.code,
+        hasState: !!data.state
+    });
+    
     return await api<GitHubCallbackResponse>({
         endpoint: 'auth/github/callback',
         method: 'POST',
@@ -158,5 +176,75 @@ export const getUserProviders = async () => {
     return await api<UserProvidersResponse>({
         endpoint: 'users/providers',
         method: 'GET'
+    })
+}
+
+// Google Auth Types
+export type GoogleStartAuthResponse = {
+    authorizationUrl: string;
+}
+
+export type GoogleCallbackData = {
+    code: string;
+    state?: string;
+}
+
+export type GoogleCallbackResponse = {
+    authToken: string;
+    refreshToken: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        roles: string[];
+        isActive: boolean;
+    };
+    isNewUser: boolean;
+}
+
+export type GoogleLinkData = {
+    code: string;
+}
+
+export type GoogleLinkResponse = {
+    success: boolean;
+    googleAccount: {
+        id: string;
+        googleEmail: string;
+        picture?: string;
+    };
+}
+
+/* Google Auth Functions */
+export const startGoogleAuth = async (state?: string) => {
+    return await api<GoogleStartAuthResponse>({
+        endpoint: 'auth/google/start',
+        method: 'POST',
+        withAuth: false,
+        data: { state }
+    })
+}
+
+export const googleCallback = async (data: GoogleCallbackData) => {
+    return await api<GoogleCallbackResponse>({
+        endpoint: 'auth/google/callback',
+        method: 'POST',
+        withAuth: false,
+        data
+    })
+}
+
+export const linkGoogleAccount = async (data: GoogleLinkData) => {
+    return await api<GoogleLinkResponse>({
+        endpoint: 'auth/google/link',
+        method: 'POST',
+        data
+    })
+}
+
+export const unlinkGoogleAccount = async () => {
+    return await api<{ success: boolean }>({
+        endpoint: 'auth/google/unlink',
+        method: 'DELETE'
     })
 }

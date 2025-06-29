@@ -1,4 +1,4 @@
-// components/Pages/Auth/SignIn.tsx - Versão atualizada
+// components/Pages/Auth/SignIn.tsx - ATUALIZADO COM GOOGLE
 "use client";
 
 import { useState } from "react";
@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GitHubButton } from "@/components/ui/GitHubButton";
+import { GoogleButton } from "@/components/ui/GoogleButton";
 
 export const SignInPage = () => {
     const [loading, setLoading] = useState(false)
@@ -59,10 +60,16 @@ export const SignInPage = () => {
                         Login
                     </h1>
 
-                    {/* GitHub Login Button */}
-                    <div className="mb-6">
+                    {/* Social Login Buttons */}
+                    <div className="space-y-3 mb-6">
                         <GitHubButton 
                             text="Entrar com GitHub"
+                            variant="outline"
+                            className="bg-gray-700 dark:bg-gray-100 border-gray-600 dark:border-gray-300 text-white dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-200"
+                            state="login"
+                        />
+                        <GoogleButton 
+                            text="Entrar com Google"
                             variant="outline"
                             className="bg-gray-700 dark:bg-gray-100 border-gray-600 dark:border-gray-300 text-white dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-200"
                             state="login"

@@ -1,48 +1,31 @@
-// app/auth/github/callback/page.tsx - CORRIGIDO
+// app/auth/google/callback/page.tsx
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import { handleGitHubCallback } from "@/lib/server/auth";
+import { handleGoogleCallback } from "@/lib/server/auth";
 import { toast } from "sonner";
 import { BarLoader } from 'react-spinners';
 
-export default function GitHubCallbackPage() {
+export default function GoogleCallbackPage() {
     const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
     const [message, setMessage] = useState('Processando autenticação...');
-    const hasProcessed = useRef(false); // ✅ Previne execução dupla
     
     const router = useRouter();
     const searchParams = useSearchParams();
     const setUser = useAuthStore(state => state.setUser);
 
     useEffect(() => {
-        // ✅ Previne execução dupla
-        if (hasProcessed.current) {
-            console.log('⚠️ Callback já processado, ignorando...');
-            return;
-        }
-
         const processCallback = async () => {
-            console.log('🚀 [Frontend] Iniciando processamento do callback...');
-            hasProcessed.current = true; // ✅ Marca como processado
-
             const code = searchParams.get('code');
             const state = searchParams.get('state');
             const error = searchParams.get('error');
 
-            console.log('📝 [Frontend] Parâmetros recebidos:', {
-                hasCode: !!code,
-                hasState: !!state,
-                hasError: !!error
-            });
-
-            // Se houve erro no GitHub
+            // Se houve erro no Google
             if (error) {
-                console.log('❌ [Frontend] Erro do GitHub:', error);
                 setStatus('error');
-                setMessage('Acesso negado pelo GitHub');
+                setMessage('Acesso negado pelo Google');
                 toast.error('Autenticação cancelada', { position: "bottom-right" });
                 
                 setTimeout(() => {
@@ -53,7 +36,6 @@ export default function GitHubCallbackPage() {
 
             // Se não tem código, erro
             if (!code) {
-                console.log('❌ [Frontend] Código não encontrado');
                 setStatus('error');
                 setMessage('Código de autorização não encontrado');
                 toast.error('Erro na autenticação', { position: "bottom-right" });
@@ -66,15 +48,13 @@ export default function GitHubCallbackPage() {
 
             try {
                 setMessage('Finalizando autenticação...');
-                console.log('📤 [Frontend] Enviando código para o backend...');
                 
-                const response = await handleGitHubCallback({ 
+                const response = await handleGoogleCallback({ 
                     code, 
                     state: state || undefined 
                 });
 
                 if (response.error) {
-                    console.log('❌ [Frontend] Erro do backend:', response.error.message);
                     setStatus('error');
                     setMessage(response.error.message);
                     toast.error(response.error.message, { position: "bottom-right" });
@@ -86,12 +66,6 @@ export default function GitHubCallbackPage() {
                 }
 
                 if (response.data) {
-                    console.log('✅ [Frontend] Sucesso do backend:', {
-                        userId: response.data.user.id,
-                        email: response.data.user.email,
-                        isNewUser: response.data.user.isNewUser
-                    });
-
                     setStatus('success');
                     setMessage('Autenticação realizada com sucesso!');
                     
@@ -106,7 +80,7 @@ export default function GitHubCallbackPage() {
                         isActive: true
                     });
 
-                    const welcomeMessage = response.data.user.isNewUser 
+                    const welcomeMessage = response.data.isNewUser 
                         ? 'Bem-vindo! Sua conta foi criada com sucesso!' 
                         : 'Bem-vindo de volta!';
                     
@@ -118,7 +92,7 @@ export default function GitHubCallbackPage() {
                     }, 2000);
                 }
             } catch (error) {
-                console.error('💥 [Frontend] Erro no callback GitHub:', error);
+                console.error('Erro no callback Google:', error);
                 setStatus('error');
                 setMessage('Erro interno no processamento');
                 toast.error('Erro interno', { position: "bottom-right" });
@@ -130,7 +104,7 @@ export default function GitHubCallbackPage() {
         };
 
         processCallback();
-    }, []); // ✅ Array vazio - executa apenas uma vez
+    }, [searchParams, router, setUser]);
 
     const getStatusColor = () => {
         switch (status) {
@@ -156,7 +130,7 @@ export default function GitHubCallbackPage() {
                 <div className="mb-6">
                     <div className="text-6xl mb-4">{getStatusIcon()}</div>
                     <h1 className="text-2xl font-bold mb-2 dark:text-white">
-                        Autenticação GitHub
+                        Autenticação Google
                     </h1>
                 </div>
 
