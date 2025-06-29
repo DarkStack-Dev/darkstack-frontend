@@ -1,4 +1,4 @@
-// components/Pages/Auth/SignUp.tsx - Versão atualizada
+// components/Pages/Auth/SignUp.tsx - ATUALIZADO COM GOOGLE
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -21,6 +21,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { GitHubButton } from "@/components/ui/GitHubButton";
+import { GoogleButton } from "@/components/ui/GoogleButton";
 
 export const SignUpPage = () => {
     const [loading, setLoading] = useState(false)
@@ -65,10 +66,16 @@ export const SignUpPage = () => {
                         Criar Conta
                     </h1>
 
-                    {/* GitHub Signup Button */}
-                    <div className="mb-6">
+                    {/* Social Signup Buttons */}
+                    <div className="space-y-3 mb-6">
                         <GitHubButton 
                             text="Criar conta com GitHub"
+                            variant="outline"
+                            className="bg-gray-700 dark:bg-gray-100 border-gray-600 dark:border-gray-300 text-white dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-200"
+                            state="signup"
+                        />
+                        <GoogleButton 
+                            text="Criar conta com Google"
                             variant="outline"
                             className="bg-gray-700 dark:bg-gray-100 border-gray-600 dark:border-gray-300 text-white dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-200"
                             state="signup"

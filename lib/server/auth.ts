@@ -8,6 +8,8 @@ import { User } from "@/types/accounts/user";
 import { redirect } from "next/navigation";
 import { startGitHubAuth, linkGitHubAccount, unlinkGitHubAccount } from "@/lib/requests";
 import { GitHubCallbackData, GitHubLinkData } from "@/lib/requests";
+import { startGoogleAuth, googleCallback, linkGoogleAccount, unlinkGoogleAccount } from "@/lib/requests";
+import { GoogleCallbackData, GoogleLinkData } from "@/lib/requests";
 
 export const handleSignIn = async (data: SignInData) => {
     const response = await signIn(data)
@@ -100,4 +102,34 @@ export const handleGitHubLink = async (data: GitHubLinkData) => {
 
 export const handleGitHubUnlink = async () => {
     return await unlinkGitHubAccount();
+}
+
+
+/* Google Auth Server Actions */
+export const handleGoogleStart = async (state?: string) => {
+    return await startGoogleAuth(state);
+}
+
+export const handleGoogleCallback = async (data: GoogleCallbackData) => {
+    const response = await googleCallback(data);
+    
+    if (response.data) {
+        const cookieStore = await cookies();
+        cookieStore.set({
+            name: process.env.NEXT_PUBLIC_AUTH_KEY as string,
+            value: response.data.authToken,
+            httpOnly: true,
+            maxAge: 86400 * 7 // 7 days
+        });
+    }
+    
+    return response;
+}
+
+export const handleGoogleLink = async (data: GoogleLinkData) => {
+    return await linkGoogleAccount(data);
+}
+
+export const handleGoogleUnlink = async () => {
+    return await unlinkGoogleAccount();
 }

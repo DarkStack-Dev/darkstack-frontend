@@ -37,6 +37,7 @@ export async function middleware(request: NextRequest) {
         '/auth/recover', 
         '/auth/retrieve', 
         '/auth/github/callback', 
+        '/auth/google/callback', 
         '/auth/reset',
         '/sobrenos',
         '/api/auth/github',

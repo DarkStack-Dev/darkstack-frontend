@@ -178,3 +178,73 @@ export const getUserProviders = async () => {
         method: 'GET'
     })
 }
+
+// Google Auth Types
+export type GoogleStartAuthResponse = {
+    authorizationUrl: string;
+}
+
+export type GoogleCallbackData = {
+    code: string;
+    state?: string;
+}
+
+export type GoogleCallbackResponse = {
+    authToken: string;
+    refreshToken: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        roles: string[];
+        isActive: boolean;
+    };
+    isNewUser: boolean;
+}
+
+export type GoogleLinkData = {
+    code: string;
+}
+
+export type GoogleLinkResponse = {
+    success: boolean;
+    googleAccount: {
+        id: string;
+        googleEmail: string;
+        picture?: string;
+    };
+}
+
+/* Google Auth Functions */
+export const startGoogleAuth = async (state?: string) => {
+    return await api<GoogleStartAuthResponse>({
+        endpoint: 'auth/google/start',
+        method: 'POST',
+        withAuth: false,
+        data: { state }
+    })
+}
+
+export const googleCallback = async (data: GoogleCallbackData) => {
+    return await api<GoogleCallbackResponse>({
+        endpoint: 'auth/google/callback',
+        method: 'POST',
+        withAuth: false,
+        data
+    })
+}
+
+export const linkGoogleAccount = async (data: GoogleLinkData) => {
+    return await api<GoogleLinkResponse>({
+        endpoint: 'auth/google/link',
+        method: 'POST',
+        data
+    })
+}
+
+export const unlinkGoogleAccount = async () => {
+    return await api<{ success: boolean }>({
+        endpoint: 'auth/google/unlink',
+        method: 'DELETE'
+    })
+}
