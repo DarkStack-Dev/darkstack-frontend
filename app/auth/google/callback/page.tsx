@@ -1,7 +1,7 @@
-// app/auth/google/callback/page.tsx
+// app/auth/google/callback/page.tsx - CORRIGIDO
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { handleGoogleCallback } from "@/lib/server/auth";
@@ -11,19 +11,36 @@ import { BarLoader } from 'react-spinners';
 export default function GoogleCallbackPage() {
     const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
     const [message, setMessage] = useState('Processando autenticação...');
+    const hasProcessed = useRef(false); // ✅ Previne execução dupla
     
     const router = useRouter();
     const searchParams = useSearchParams();
     const setUser = useAuthStore(state => state.setUser);
 
     useEffect(() => {
+        // ✅ Previne execução dupla
+        if (hasProcessed.current) {
+            console.log('⚠️ Google Callback já processado, ignorando...');
+            return;
+        }
+
         const processCallback = async () => {
+            console.log('🚀 [Frontend] Iniciando processamento do Google callback...');
+            hasProcessed.current = true; // ✅ Marca como processado
+
             const code = searchParams.get('code');
             const state = searchParams.get('state');
             const error = searchParams.get('error');
 
+            console.log('📝 [Frontend] Parâmetros recebidos:', {
+                hasCode: !!code,
+                hasState: !!state,
+                hasError: !!error
+            });
+
             // Se houve erro no Google
             if (error) {
+                console.log('❌ [Frontend] Erro do Google:', error);
                 setStatus('error');
                 setMessage('Acesso negado pelo Google');
                 toast.error('Autenticação cancelada', { position: "bottom-right" });
@@ -36,6 +53,7 @@ export default function GoogleCallbackPage() {
 
             // Se não tem código, erro
             if (!code) {
+                console.log('❌ [Frontend] Código não encontrado');
                 setStatus('error');
                 setMessage('Código de autorização não encontrado');
                 toast.error('Erro na autenticação', { position: "bottom-right" });
@@ -48,6 +66,7 @@ export default function GoogleCallbackPage() {
 
             try {
                 setMessage('Finalizando autenticação...');
+                console.log('📤 [Frontend] Enviando código para o backend...');
                 
                 const response = await handleGoogleCallback({ 
                     code, 
@@ -55,6 +74,7 @@ export default function GoogleCallbackPage() {
                 });
 
                 if (response.error) {
+                    console.log('❌ [Frontend] Erro do backend:', response.error.message);
                     setStatus('error');
                     setMessage(response.error.message);
                     toast.error(response.error.message, { position: "bottom-right" });
@@ -66,6 +86,12 @@ export default function GoogleCallbackPage() {
                 }
 
                 if (response.data) {
+                    console.log('✅ [Frontend] Sucesso do backend:', {
+                        userId: response.data.user.id,
+                        email: response.data.user.email,
+                        isNewUser: response.data.isNewUser
+                    });
+
                     setStatus('success');
                     setMessage('Autenticação realizada com sucesso!');
                     
@@ -92,7 +118,7 @@ export default function GoogleCallbackPage() {
                     }, 2000);
                 }
             } catch (error) {
-                console.error('Erro no callback Google:', error);
+                console.error('💥 [Frontend] Erro no callback Google:', error);
                 setStatus('error');
                 setMessage('Erro interno no processamento');
                 toast.error('Erro interno', { position: "bottom-right" });
@@ -104,7 +130,7 @@ export default function GoogleCallbackPage() {
         };
 
         processCallback();
-    }, [searchParams, router, setUser]);
+    }, []); // ✅ Array vazio - executa apenas uma vez
 
     const getStatusColor = () => {
         switch (status) {
