@@ -1,8 +1,9 @@
+// components/Layouts/Header.tsx - ATUALIZADO
 "use client"
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 type HeaderProps = {
-    withSidebarTrigger?: boolean; // prop opcional
+    withSidebarTrigger?: boolean;
 };
 
 import { handleSignOut } from "@/lib/server/auth"
@@ -11,27 +12,24 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { toast } from "sonner"
-// import Logo from "@/assets/frango.png"
 import Image from "next/image"
 import { Button } from "../ui/button"
-import { ChevronDown, FileText, Home, LogOut, Moon, Settings, Shield, Sun, User, Users } from "lucide-react"
-// import MenuNavigation from "@/components/Layouts/MenuNavigation"
+import { ChevronDown, FileText, Home, LogOut, Moon, Settings, Shield, Sun, User, Users, Plus, FolderOpen, Eye } from "lucide-react"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    DropdownMenuLabel
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { usePermissions } from "@/hooks/usePermissions";
-import {NavigationMenuDemo} from "./MenuNavigation";
 import { ProtectedComponent } from "../ProtectedComponent";
-import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu";
-export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
-    const { setTheme } = useTheme() // claro ou escuro
-    const { user, clearUser } = useAuthStore()
 
+export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
+    const { setTheme } = useTheme()
+    const { user, clearUser } = useAuthStore()
     const { 
         showAdminMenu, 
         showModeratorMenu, 
@@ -40,41 +38,24 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
         canManageUsers,
         canViewReports 
     } = usePermissions()
-
     const pathname = usePathname()
 
     const handleLogOut = () => {
-        handleSignOut() // usar a função SignOut para remover o access do cookies
-
-        toast.success('Deslogado com sucesso', { position: "bottom-right" }) // usar o toast do sonner de sucesso e posicionar no centro acima
+        handleSignOut()
+        toast.success('Deslogado com sucesso', { position: "bottom-right" })
         clearUser()
     }
       
-    // fixed top-0 left-0 right-0 z-50 h-header
     return (
         <header className="fixed top-0 left-0 right-0 z-50 h-[3rem] px-2 bg-white/30 backdrop-blur-lg border-b border-gray-100 bg-slate-100 dark:bg-slate-900/30 dark:border-slate-800">
-            <nav className="flex items-center justify-between h-full  mx-auto">
-                {/* max-w-7xl */}
-
+            <nav className="flex items-center justify-between h-full mx-auto">
                 {/* Container para manter SidebarTrigger e Logo juntos no lado esquerdo */}
                 <div className="flex gap-2 items-center">
                     {withSidebarTrigger && (
-                        <SidebarTrigger /> // Mantém o botão próximo à logo
+                        <SidebarTrigger />
                     )}
-                    {/* <div className=" hidden min-[480px]:block">
-                        <Link href='/'>
-                            <Image
-                                src={Logo}
-                                alt="logo frango vision"
-                                width={100}
-                                priority
-                            />
-                        </Link>
-                    </div> */}
-                    {/* <div className="hidden min-[480px]:block">
-                        <NavigationMenuDemo />
-                    </div> */}
 
+                    {/* Logo/Home para mobile */}
                     <Button className="flex min-[480px]:hidden">
                         <Link href='/'>
                             <Home className="size-[1.2rem]" />
@@ -84,30 +65,66 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                     {/* Menu de navegação principal - só aparece para usuários logados */}
                     {user && (
                         <div className="hidden min-[480px]:flex items-center gap-4 ml-4">
-                            <Link href="/projects" className="hover:underline">
-                                Projetos
-                            </Link>
+                            {/* Projetos */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button 
+                                        variant={pathname.startsWith('/projects') ? 'default' : 'ghost'} 
+                                        className="flex items-center gap-1"
+                                    >
+                                        Projetos
+                                        <ChevronDown className="w-3 h-3" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="w-48">
+                                    <DropdownMenuLabel>Explorar</DropdownMenuLabel>
+                                    <Link href="/projects">
+                                        <DropdownMenuItem>
+                                            <Eye className="mr-2 w-4 h-4" />
+                                            Ver Projetos
+                                        </DropdownMenuItem>
+                                    </Link>
+                                    
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuLabel>Meus Projetos</DropdownMenuLabel>
+                                    
+                                    <Link href="/projects/new">
+                                        <DropdownMenuItem>
+                                            <Plus className="mr-2 w-4 h-4" />
+                                            Criar Projeto
+                                        </DropdownMenuItem>
+                                    </Link>
+                                    
+                                    <Link href="/projects/my">
+                                        <DropdownMenuItem>
+                                            <FolderOpen className="mr-2 w-4 h-4" />
+                                            Gerenciar Meus Projetos
+                                        </DropdownMenuItem>
+                                    </Link>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                             
                             {/* Menu de Moderação */}
                             <ProtectedComponent roles={['ADMIN', 'MODERATOR']}>
-                                <Link href="/moderator" className="hover:underline">
+                                <Link href="/projects/admin" className={`hover:underline ${pathname === '/projects/admin' ? 'font-semibold' : ''}`}>
                                     Moderação
                                 </Link>
                             </ProtectedComponent>
                         </div>
                     )}
+
+                    {/* Links simples para usuários não logados */}
+                    {!user && (
+                        <div className="hidden min-[480px]:flex items-center gap-4 ml-4">
+                            <Link href="/projects" className="hover:underline">
+                                Projetos
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-6">
-                    {/* <Button
-                        className="flex lg:hidden"
-                        size="icon"
-                        onClick={() => handlePlaceHolder()}
-                    >
-                        <Menu className="size-[1.2rem]" />
-                        <span className="sr-only">Abrir/Fechar as conversas</span>
-                    </Button> */}
-
+                    {/* Theme Toggle */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
@@ -188,7 +205,8 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                         </span>
                     )}
 
-                    {user &&
+                    {/* User Menu */}
+                    {user && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
@@ -210,12 +228,23 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                
                                 <Link href="/account">
                                     <DropdownMenuItem>
                                         <User className="mr-3 size-4" />
                                         <span>Perfil</span>
                                     </DropdownMenuItem>
                                 </Link>
+                                
+                                <Link href="/projects/my">
+                                    <DropdownMenuItem>
+                                        <FolderOpen className="mr-3 size-4" />
+                                        <span>Meus Projetos</span>
+                                    </DropdownMenuItem>
+                                </Link>
+                                
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     className="text-red-500"
@@ -226,8 +255,9 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                    }
+                    )}
 
+                    {/* Botões para usuários não logados */}
                     {!user && (pathname.startsWith('/auth') || pathname === '/') && (
                         <div className="flex gap-2">
                             {pathname !== '/auth/signin' && (
@@ -243,9 +273,7 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                         </div>
                     )}
                 </div>
-
             </nav>
-
         </header>
     )
 }
