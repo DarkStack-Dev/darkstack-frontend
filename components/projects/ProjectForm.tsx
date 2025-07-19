@@ -1,5 +1,4 @@
-
-// components/projects/ProjectForm.tsx
+// components/projects/ProjectForm.tsx - CORRIGIDO
 "use client";
 
 import { useState } from "react";
@@ -17,7 +16,7 @@ import {
   FormLabel, 
   FormMessage 
 } from "@/components/ui/form";
-import { createProjectSchema, CreateProjectData } from "@/lib/schemas/projectSchemas";
+import { createProjectSchema, CreateProjectData, ProjectImageData } from "@/lib/schemas/projectSchemas";
 import { ImageUpload } from "./ImageUpload";
 import { useCreateProject } from "@/hooks/useProjects";
 import { Save, Loader2 } from "lucide-react";
@@ -27,6 +26,7 @@ export const ProjectForm = () => {
   const router = useRouter();
   const { create, loading } = useCreateProject();
 
+  // ✅ CORRIGIDO: Usando os tipos corretos
   const form = useForm<CreateProjectData>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
@@ -35,6 +35,11 @@ export const ProjectForm = () => {
       images: []
     }
   });
+
+  // ✅ CORRIGIDO: Função para atualizar imagens
+  const handleImagesChange = (newImages: ProjectImageData[]) => {
+    form.setValue('images', newImages, { shouldValidate: true });
+  };
 
   const onSubmit = async (data: CreateProjectData) => {
     const result = await create(data);
@@ -107,7 +112,7 @@ export const ProjectForm = () => {
                     <FormControl>
                       <ImageUpload
                         images={field.value}
-                        onImagesChange={field.onChange}
+                        onImagesChange={handleImagesChange}
                       />
                     </FormControl>
                     <FormMessage />

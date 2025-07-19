@@ -1,4 +1,4 @@
-// components/projects/ProjectsMainPage.tsx - NOVO COMPONENTE PRINCIPAL
+// components/projects/ProjectsMainPage.tsx - CORRIGIDO
 "use client";
 
 import { useState } from "react";
@@ -78,6 +78,9 @@ export const ProjectsMainPage = () => {
           stats={{
             total: projects.pagination.total,
             approved: projects.pagination.total, // Todos são aprovados nesta página
+            pending: 0,
+            rejected: 0,
+            archived: 0
           }}
           variant="simple"
         />

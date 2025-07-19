@@ -1,6 +1,6 @@
-// lib/requests/projects.ts
+// lib/requests/projects.ts - CORRIGIDO
 import { api } from '@/lib/api';
-import { CreateProjectData, ProjectFilters } from '@/types/projects/projects';
+import { CreateProjectData, ProjectFilters, Project, ProjectsResponse, MyProjectsResponse } from '@/types/projects/projects';
 
 export interface CreateProjectResponse {
   id: string;
@@ -26,92 +26,6 @@ export interface ProjectRestoreResponse {
   message: string;
   restoredAt: string;
 }
-
-
-export interface CreateProjectResponse {
-  id: string;
-  name: string;
-  status: string;
-  createdAt: string;
-  images: Array<{
-    id: string;
-    url: string;
-    filename: string;
-    isMain: boolean;
-  }>;
-}
-
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
-  createdAt: string;
-  updatedAt?: string;
-  deletedAt?: string;
-  owner: {
-    id: string;
-    name: string;
-    email: string;
-    avatar?: string;
-  };
-  images: Array<{
-    id: string;
-    filename: string;
-    url: string;
-    isMain: boolean;
-    order: number;
-  }>;
-  participantCount: number;
-  imageCount: number;
-  isOwner?: boolean;
-  approvedAt?: string;
-  approvedBy?: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  rejectionReason?: string;
-}
-
-export interface ProjectsResponse {
-  projects: Project[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrevious: boolean;
-  };
-}
-
-export interface MyProjectsResponse extends ProjectsResponse {
-  stats: {
-    total: number;
-    pending: number;
-    approved: number;
-    rejected: number;
-    archived: number;
-  };
-}
-
-export interface ProjectDeleteResponse {
-  success: boolean;
-  message: string;
-  deletedAt: string;
-}
-
-export interface ProjectRestoreResponse {
-  success: boolean;
-  message: string;
-  restoredAt: string;
-}
-/* Projetos Públicos */
-
-
-///////////////////////////////////////////////////////////////////////////////
-
 
 /* Projetos Públicos */
 export const getProjects = async (filters?: Partial<ProjectFilters>) => {

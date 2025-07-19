@@ -1,4 +1,4 @@
-// components/projects/ImageUpload.tsx - VERSÃO MELHORADA SEM REACT-DROPZONE
+// components/projects/ImageUpload.tsx - CORRIGIDO
 "use client";
 
 import { useState, useCallback, useRef } from "react";
@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { X, Upload, Star, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
-import { ProjectImageData } from "@/lib/schemas/projectSchemas";
+import { ProjectImageData, fileToBase64, getImageTypeFromFile } from "@/lib/schemas/projectSchemas";
 import { toast } from "sonner";
 
 interface ImageUploadProps {
@@ -27,38 +27,30 @@ export const ImageUpload = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const processFile = useCallback((file: File): Promise<ProjectImageData> => {
-    return new Promise((resolve, reject) => {
-      if (file.size > maxSize) {
-        reject(new Error(`Arquivo muito grande. Máximo ${maxSize / 1024 / 1024}MB`));
-        return;
-      }
+  const processFile = useCallback(async (file: File): Promise<ProjectImageData> => {
+    if (file.size > maxSize) {
+      throw new Error(`Arquivo muito grande. Máximo ${maxSize / 1024 / 1024}MB`);
+    }
 
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
-      if (!validTypes.includes(file.type)) {
-        reject(new Error('Tipo de arquivo não suportado'));
-        return;
-      }
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      throw new Error('Tipo de arquivo não suportado');
+    }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target?.result as string;
-        const base64Data = base64.split(',')[1]; // Remove o prefixo data:image/...;base64,
-        
-        // Obter extensão do arquivo
-        const extension = file.name.split('.').pop()?.toUpperCase() as any;
-        
-        resolve({
-          filename: file.name,
-          type: extension === 'JPG' ? 'JPEG' : extension,
-          base64: base64Data,
-          isMain: images.length === 0, // Primeira imagem é automaticamente principal
-          size: file.size
-        });
+    try {
+      const base64Data = await fileToBase64(file);
+      const imageType = getImageTypeFromFile(file);
+      
+      return {
+        filename: file.name,
+        type: imageType,
+        base64: base64Data,
+        isMain: images.length === 0, // ✅ CORRIGIDO: Sempre boolean
+        size: file.size
       };
-      reader.onerror = () => reject(new Error('Erro ao ler arquivo'));
-      reader.readAsDataURL(file);
-    });
+    } catch (error) {
+      throw new Error('Erro ao processar arquivo');
+    }
   }, [images.length, maxSize]);
 
   const handleFiles = useCallback(async (files: FileList) => {
@@ -70,14 +62,23 @@ export const ImageUpload = ({
     }
 
     try {
-      const newImages = await Promise.all(
-        fileArray.map(file => processFile(file))
-      );
+      const newImages: ProjectImageData[] = [];
       
-      onImagesChange([...images, ...newImages]);
-      toast.success(`${newImages.length} imagem(ns) adicionada(s)`);
+      for (const file of fileArray) {
+        try {
+          const processedImage = await processFile(file);
+          newImages.push(processedImage);
+        } catch (error) {
+          toast.error(`Erro no arquivo ${file.name}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+        }
+      }
+      
+      if (newImages.length > 0) {
+        onImagesChange([...images, ...newImages]);
+        toast.success(`${newImages.length} imagem(ns) adicionada(s)`);
+      }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Erro ao processar imagens');
+      toast.error('Erro ao processar imagens');
     }
   }, [images, maxImages, onImagesChange, processFile]);
 
@@ -117,7 +118,7 @@ export const ImageUpload = ({
     
     // Se removeu a imagem principal e ainda há imagens, marcar a primeira como principal
     if (images[index].isMain && newImages.length > 0) {
-      newImages[0].isMain = true;
+      newImages[0] = { ...newImages[0], isMain: true };
     }
     
     onImagesChange(newImages);

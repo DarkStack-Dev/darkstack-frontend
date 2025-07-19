@@ -1,5 +1,6 @@
-// lib/schemas/projectSchemas.ts
+// lib/schemas/projectSchemas.ts - CORRIGIDO
 import { z } from 'zod';
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_IMAGE_TYPES = ['JPG', 'JPEG', 'PNG', 'WEBP', 'GIF', 'SVG'] as const;
 
@@ -9,7 +10,7 @@ export const projectImageSchema = z.object({
     errorMap: () => ({ message: 'Tipo de arquivo não suportado' })
   }),
   base64: z.string().min(1, 'Imagem é obrigatória'),
-  isMain: z.boolean().default(false),
+  isMain: z.boolean(), // ✅ CORRIGIDO: Removido default para tornar obrigatório
   size: z.number().max(MAX_FILE_SIZE, 'Arquivo muito grande (máx 10MB)').optional()
 });
 
@@ -43,3 +44,24 @@ export const projectFiltersSchema = z.object({
 });
 
 export type ProjectFilters = z.infer<typeof projectFiltersSchema>;
+
+// ✅ ADICIONADO: Helpers para conversão de tipos
+export const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Remove o prefixo data:image/...;base64,
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
+export const getImageTypeFromFile = (file: File): typeof ACCEPTED_IMAGE_TYPES[number] => {
+  const extension = file.name.split('.').pop()?.toUpperCase();
+  if (extension === 'JPG') return 'JPEG';
+  return (extension as typeof ACCEPTED_IMAGE_TYPES[number]) || 'JPEG';
+};

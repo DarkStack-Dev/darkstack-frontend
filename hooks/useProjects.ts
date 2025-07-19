@@ -1,4 +1,4 @@
-// hooks/useProjects.ts
+// hooks/useProjects.ts - CORRIGIDO
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { 
@@ -40,20 +40,7 @@ export const useProjects = (initialFilters?: Partial<ProjectFilters>) => {
         return;
       }
       
-      setProjects(
-        response.data
-          ? {
-              ...response.data,
-              projects: response.data.projects.map(project => ({
-                ...project,
-                images: project.images.map(image => ({
-                  type: (image as any).type ?? 'unknown', // provide a default or mapping logic for 'type'
-                  ...image,
-                })),
-              })),
-            }
-          : null
-      );
+      setProjects(response.data || null);
     } catch (err) {
       const message = 'Erro ao carregar projetos';
       setError(message);
@@ -106,17 +93,7 @@ export const useProject = (id: string) => {
         return;
       }
       
-      setProject(
-        response.data
-          ? {
-              ...response.data,
-              images: response.data.images.map(image => ({
-                type: (image as any).type ?? 'unknown', // provide a default or mapping logic for 'type'
-                ...image,
-              })),
-            }
-          : null
-      );
+      setProject(response.data || null);
     } catch (err) {
       const message = 'Erro ao carregar projeto';
       setError(message);
@@ -158,20 +135,7 @@ export const useMyProjects = (initialFilters?: Partial<ProjectFilters>) => {
         return;
       }
       
-      setMyProjects(
-        response.data
-          ? {
-              ...response.data,
-              projects: response.data.projects.map(project => ({
-                ...project,
-                images: project.images.map(image => ({
-                  type: (image as any).type ?? 'unknown', // or provide a default or mapping logic for 'type'
-                  ...image,
-                })),
-              })),
-            }
-          : null
-      );
+      setMyProjects(response.data || null);
     } catch (err) {
       const message = 'Erro ao carregar seus projetos';
       setError(message);
@@ -280,7 +244,7 @@ export const useProjectModeration = () => {
     try {
       setLoading(true);
       const response = permanent 
-        ? await deleteProject(id) // Assumindo que o backend vai decidir baseado na role
+        ? await deleteProject(id) // O backend decide baseado na role
         : await deleteProject(id);
       
       if (response.error) {
@@ -339,20 +303,7 @@ export const useDeletedProjects = () => {
         return;
       }
       
-      setDeletedProjects(
-        response.data
-          ? {
-              ...response.data,
-              projects: response.data.projects.map(project => ({
-                ...project,
-                images: project.images.map(image => ({
-                  type: (image as any).type ?? 'unknown', // or provide a default or mapping logic for 'type'
-                  ...image,
-                })),
-              })),
-            }
-          : null
-      );
+      setDeletedProjects(response.data || null);
     } catch (err) {
       const message = 'Erro ao carregar projetos deletados';
       setError(message);
