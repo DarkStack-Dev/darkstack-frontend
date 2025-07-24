@@ -4,6 +4,9 @@ import "./globals.css";
 import { Providers } from "@/components/Layouts/Providers";
 import { handleGetUser } from "@/lib/server/auth";
 import { MainLayout } from "@/components/Layouts/MainLayout";
+import NextTopLoader from 'nextjs-toploader';
+
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,14 +44,15 @@ export default async function RootLayout({
   return (
 		<html lang="pt-br" suppressHydrationWarning>
 			<body >
+        <NextTopLoader />
 				<Providers>
 					<MainLayout user={user}>
-						
+
 						{children}
 						
 					</MainLayout>
-					
-				</Providers>
+        </Providers>
+				
 				
 			</body>
 		</html>

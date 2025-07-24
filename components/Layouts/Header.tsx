@@ -5,7 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 type HeaderProps = {
     withSidebarTrigger?: boolean;
 };
-
+import {getTranslations} from 'next-intl/server';
 import { handleSignOut } from "@/lib/server/auth"
 import { useAuthStore } from "@/store/authStore"
 import { useTheme } from "next-themes"
@@ -26,6 +26,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { usePermissions } from "@/hooks/usePermissions";
 import { ProtectedComponent } from "../ProtectedComponent";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+
 
 export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
     const { setTheme } = useTheme()
@@ -45,9 +47,12 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
         toast.success('Deslogado com sucesso', { position: "bottom-right" })
         clearUser()
     }
-      
+    
+    
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 h-[3rem] px-2 bg-white/30 backdrop-blur-lg border-b border-gray-100 bg-slate-100 dark:bg-slate-900/30 dark:border-slate-800">
+
+    <header className="fixed top-0 left-0 right-0 z-50 h-[3rem] px-2 bg-white/30 backdrop-blur-lg border-b border-gray-100 dark:bg-slate-900/30 dark:border-slate-800">
+    
             <nav className="flex items-center justify-between h-full mx-auto">
                 {/* Container para manter SidebarTrigger e Logo juntos no lado esquerdo */}
                 <div className="flex gap-2 items-center">
@@ -72,7 +77,7 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                                         variant={pathname.startsWith('/projects') ? 'default' : 'ghost'} 
                                         className="flex items-center gap-1"
                                     >
-                                        Projetos
+                                        
                                         <ChevronDown className="w-3 h-3" />
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -124,6 +129,7 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
                 </div>
 
                 <div className="flex items-center gap-6">
+                    <LanguageSwitcher />
                     {/* Theme Toggle */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -277,3 +283,5 @@ export const Header = ({ withSidebarTrigger = false }: HeaderProps) => {
         </header>
     )
 }
+
+

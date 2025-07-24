@@ -16,6 +16,11 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GitHubButton } from "@/components/ui/GitHubButton";
 import { GoogleButton } from "@/components/ui/GoogleButton";
+import PasswordField from "@/components/ui/PasswordField";
+
+
+
+
 
 export const SignInPage = () => {
     const [loading, setLoading] = useState(false)
@@ -123,12 +128,8 @@ export const SignInPage = () => {
                                             <label htmlFor="password" className="block text-sm font-medium text-gray-300 dark:text-gray-700 mb-1">
                                                 Senha
                                             </label>
-                                            <input
-                                                type="password"
-                                                placeholder="Digite sua senha"
-                                                {...field}
-                                                className="w-full px-4 py-2 border border-gray-600 dark:border-gray-300 bg-gray-700 dark:bg-white text-white dark:text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
-                                            />
+                                            <PasswordField field={field} />
+
                                         </div>
                                     )}
                                 />

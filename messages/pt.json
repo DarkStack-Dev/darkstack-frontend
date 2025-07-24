@@ -1,0 +1,24 @@
+{
+"header": {
+    "projects": "Projetos",
+    "viewProjects": "Ver Projetos",
+    "createProject": "Criar Projeto",
+    "manageMyProjects": "Gerenciar Meus Projetos",
+    "moderation": "Moderação",
+    "admin": "Admin",
+    "administration": "Administração",
+    "dashboard": "Dashboard",
+    "manageUsers": "Gerenciar Usuários",
+    "settings": "Configurações",
+    "reports": "Relatórios",
+    "profile": "Perfil",
+    "myProjects": "Meus Projetos",
+    "logout": "Sair",
+    "login": "Entrar",
+    "signup": "Registrar-se",
+    "theme": "Alterar o tema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Sistema"
+    }
+}

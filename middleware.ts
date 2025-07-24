@@ -1,6 +1,18 @@
 // middleware.ts - ATUALIZADO
 import { NextRequest, NextResponse } from "next/server";
 import { handleGetUser } from "@/lib/server/auth";
+import createMiddleware from 'next-intl/middleware';
+import {routing} from './i18n/routing';
+
+
+export default createMiddleware({
+    locales: ['pt', 'en'],
+    defaultLocale: 'pt'
+});
+
+export const configuratiom = {
+    matcher: ['/((?!_next|favicon.ico|images|assets).*)']
+};
 
 // Definindo as roles disponíveis (baseado no seu Prisma schema)
 type UserRole = 'ADMIN' | 'USER' | 'MODERATOR' | 'GUEST';

@@ -1,0 +1,24 @@
+{
+"header": {
+    "projects": "Projects",
+    "viewProjects": "View Projects",
+    "createProject": "Create Project",
+    "manageMyProjects": "Manage My Projects",
+    "moderation": "Moderation",
+    "admin": "Admin",
+    "administration": "Administration",
+    "dashboard": "Dashboard",
+    "manageUsers": "Manage Users",
+    "settings": "Settings",
+    "reports": "Reports",
+    "profile": "Profile",
+    "myProjects": "My Projects",
+    "logout": "Log out",
+    "login": "Sign in",
+    "signup": "Sign up",
+    "theme": "Change theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+    }
+}
