@@ -1,15 +1,16 @@
-  "use client";
+// components/Layouts/MainLayout.tsx - ATUALIZADO
+
+"use client";
 
 import { useAuthStore } from "@/store/authStore";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { User } from "@/types/accounts/user";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation"; // 1. Usar o hook de navegação correto
 import { useEffect, useState } from "react";
 import { Header } from "./Header";
 import { BarLoader } from 'react-spinners';
 import { Footer } from "./Footer";
-
 
 type Props = {
     user: User | null,
@@ -17,25 +18,18 @@ type Props = {
 }
 
 export const MainLayout = ({ user, children }: Props) => {
-    // const auth = useAuthStore();
     const [loading, setLoading] = useState(true);
     const pathname = usePathname();
-
-    // useEffect(() => {
-    //     if (user) auth.setUser(user);
-    //     setLoading(false);
-    // }, [user]);
-
-    const { setUser, clearUser } = useAuthStore()
+    const { setUser, clearUser } = useAuthStore();
 
     useEffect(() => {
         if (user) {
-            setUser(user)
+            setUser(user);
         } else {
-            clearUser()
+            clearUser();
         }
         setLoading(false);
-    }, [user, setUser, clearUser])
+    }, [user, setUser, clearUser]);
 
     if (loading) {
         return (
@@ -45,32 +39,29 @@ export const MainLayout = ({ user, children }: Props) => {
         );
     }
 
-    // Renderização do layout com o Sidebar
-    return (
-        <div className="mt-[3rem] relative overflow-hidden bg-slate-200 dark:bg-slate-950">
-            {user && !pathname.includes("auth") ? (
-                <SidebarProvider>
-                    <AppSidebar className="mt-[3rem] h-[calc(100vh-3rem)]" />
-                    
-                    <div className="flex-1">
-                        {/* Coloca o SidebarTrigger dentro do Header */}
-                        <Header withSidebarTrigger={true} />
-                        <div>
-                            <main >
-                                {children}
-                            </main>
-                            <Footer />
-                        </div>
-                    </div>
-                </SidebarProvider>
-            ) : (
-                <div className="flex-1">
-                    <Header />
-                    {children}
-                    <Footer />
-                </div>
-            )}
+    // Define se a página de autenticação está ativa
+    const isAuthPage = pathname.includes("/auth");
 
+    return (
+        // 2. A estrutura principal agora usa flexbox para organizar o layout
+        <div className="flex flex-col min-h-screen bg-slate-200 dark:bg-slate-950">
+            <Header withSidebarTrigger={!!user && !isAuthPage} />
+            
+            <div className="flex flex-1 mt-[3rem]"> {/* Conteúdo principal começa abaixo do header */}
+                {user && !isAuthPage && (
+                    <SidebarProvider>
+                        <AppSidebar />
+                    </SidebarProvider>
+                )}
+                
+                {/* 3. A 'main' agora ocupa o espaço restante, empurrando o footer para baixo */}
+                <main className="flex-1 overflow-y-auto">
+                    {children}
+                </main>
+            </div>
+            
+            {/* 4. O Footer é renderizado fora da área de conteúdo principal */}
+            <Footer />
         </div>
     );
 };
