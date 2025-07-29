@@ -20,5 +20,121 @@
     "light": "Claro",
     "dark": "Escuro",
     "system": "Sistema"
+    },
+    "HomePage": {
+    "title": "Bem-vindo ao DarkStack",
+    "subtitle": "Explore os projetos ou crie o seu.",
+    "about": "Sobre Nós"
+    },
+    "IndexPage": {
+    "getStarted": "Comece editando",
+    "saveChanges": "Salve e veja suas mudanças instantaneamente.",
+    "deployNow": "Fazer Deploy Agora",
+    "readDocs": "Ler a Documentação"
+    },
+    "SignInPage": {
+    "title": "Login | DarkStack"
+    },
+    "SignUpPage": {
+    "title": "Cadastro | DarkStack"
+    },
+    "SignInForm": {
+    "title": "Login",
+    "githubButton": "Entrar com GitHub",
+    "googleButton": "Entrar com Google",
+    "divider": "ou continue com email",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "Digite seu e-mail",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "rememberMe": "Lembrar de mim",
+    "forgotPassword": "Esqueceu sua senha?",
+    "submitButton": "Entrar",
+    "noAccount": "Não tem uma conta?",
+    "signUpLink": "Registrar"
+    },
+    "SignUpForm": {
+    "title": "Criar Conta",
+    "githubButton": "Criar conta com GitHub",
+    "googleButton": "Criar conta com Google",
+    "divider": "ou crie com email",
+    "nameLabel": "Nome",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "Digite seu e-mail",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "termsLink": "Política de Privacidade e Termos de Uso",
+    "submitButton": "Registrar",
+    "hasAccount": "Já tem uma conta?",
+    "signInLink": "Entrar",
+    "privacyPolicy": {
+      "title": "Política de Privacidade",
+      "p1": "A sua privacidade é importante para nós. É política do darkstackdev respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site darkstackdev.",
+      "p2": "Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento.",
+      "p3": "Apenas retemos as informações pelo tempo necessário. Protegemos com meios aceitáveis para evitar perdas, roubos e acessos não autorizados.",
+      "p4": "Não compartilhamos dados pessoais, exceto quando exigido por lei.",
+      "p5": "Nosso site pode conter links para sites externos, e não nos responsabilizamos pelas políticas deles.",
+      "userCommitmentTitle": "Compromisso do Usuário",
+      "commitment1": "Não realizar atividades ilegais ou contrárias à boa fé.",
+      "commitment2": "Não difundir conteúdo racista, xenofóbico ou contra direitos humanos.",
+      "commitment3": "Não causar danos a sistemas físicos e lógicos do site.",
+      "moreInfoTitle": "Mais informações",
+      "moreInfoText": "Esta política é válida a partir de 22 de junho de 2025."
     }
+  },
+  "Footer": {
+    "aboutTitle": "Sobre Nós",
+    "aboutText": "Comunidade que vai revolucionar tudo que há de desenvolvimento em programação. A comunidade de progamadores feita para programadores.",
+    "resourcesTitle": "Recursos",
+    "resourcesProjects": "Projetos",
+    "resourcesArticles": "Artigos",
+    "resourcesChallenges": "Desafios",
+    "supportTitle": "Suporte",
+    "supportHelpCenter": "Central de Ajuda",
+    "supportDocs": "Documentação",
+    "supportContact": "Contato",
+    "supportFaq": "FAQ",
+    "newsletterTitle": "Newsletter",
+    "newsletterText": "Receba as últimas atualizações sobre nossa tecnologia.",
+    "copyright": "DARKSTACK. Todos os direitos reservados."
+  },
+   "AccountProvidersPage": {
+    "loadingError": "Erro ao carregar provedores",
+    "loadInfoError": "Erro ao carregar informações",
+    "retryButton": "Tentar Novamente",
+    "title": "Provedores de Autenticação",
+    "subtitle": "Gerencie suas contas vinculadas e métodos de login",
+    "emailTitle": "Email/Senha",
+    "emailSubtitle": "Login tradicional com email e senha",
+    "configured": "Configurado",
+    "noPassword": "Sem senha",
+    "verified": "Verificado",
+    "notVerified": "Não verificado",
+    "githubTitle": "GitHub",
+    "followers": "seguidores",
+    "repositories": "repositórios",
+    "syncedAt": "Sincronizado em",
+    "connectGithubPrompt": "Conecte sua conta GitHub para login rápido",
+    "viewProfileButton": "Ver Perfil",
+    "unlinkingButton": "Desvinculando...",
+    "unlinkButton": "Desvincular",
+    "connectingButton": "Conectando...",
+    "connectButton": "Conectar GitHub",
+    "googleTitle": "Google",
+    "googleSubtitle": "Login com conta Google (Em breve)",
+    "comingSoon": "Em breve",
+    "securityTipTitle": "Dica de Segurança",
+    "securityTipText": "Manter múltiplos provedores vinculados garante que você sempre tenha acesso à sua conta, mesmo se um deles estiver temporariamente indisponível.",
+    "unlinkConfirm": "Tem certeza que deseja desvincular sua conta GitHub?"
+  },
+    "AccountSuspendedPage": {
+    "title": "Conta Suspensa",
+    "subtitle": "Sua conta foi temporariamente suspensa.",
+    "contact": "Entre em contato com o administrador."
+  },
+    "Accessibility": {
+    "showPassword": "Mostrar senha",
+    "hidePassword": "Esconder senha"
+  }
+
 }

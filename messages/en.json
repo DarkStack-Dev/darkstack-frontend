@@ -20,5 +20,120 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+    },
+    "HomePage": {
+    "title": "Welcome to DarkStack",
+    "subtitle": "Explore projects or create your own.",
+    "about": "About Us"
+    },
+    "IndexPage": {
+    "getStarted": "Get started by editing",
+    "saveChanges": "Save and see your changes instantly.",
+    "deployNow": "Deploy Now",
+    "readDocs": "Read our Docs"
+    },
+    "SignInPage": {
+    "title": "Login | DarkStack"
+    },
+    "SignUpPage": {
+    "title": "Register | DarkStack"
+    },
+    "SignInForm": {
+    "title": "Login",
+    "githubButton": "Sign in with GitHub",
+    "googleButton": "Sign in with Google",
+    "divider": "or continue with email",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot your password?",
+    "submitButton": "Sign In",
+    "noAccount": "Don't have an account?",
+    "signUpLink": "Sign Up"
+    },
+    "SignUpForm": {
+    "title": "Create Account",
+    "githubButton": "Sign up with GitHub",
+    "googleButton": "Sign up with Google",
+    "divider": "or sign up with email",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "termsLink": "Privacy Policy and Terms of Use",
+    "submitButton": "Sign Up",
+    "hasAccount": "Already have an account?",
+    "signInLink": "Sign In",
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "p1": "Your privacy is important to us. It is darkstackdev's policy to respect your privacy regarding any information we may collect from you across our website, darkstackdev.",
+      "p2": "We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent.",
+      "p3": "We only retain collected information for as long as necessary. We protect it within commercially acceptable means to prevent loss, theft, and unauthorized access.",
+      "p4": "We don’t share any personally identifying information publicly or with third-parties, except when required to by law.",
+      "p5": "Our website may link to external sites that are not operated by us. Please be aware that we have no control over the content and practices of these sites.",
+      "userCommitmentTitle": "User Commitment",
+      "commitment1": "Not to engage in activities that are illegal or contrary to good faith.",
+      "commitment2": "Not to spread racist, xenophobic, or anti-human rights content.",
+      "commitment3": "Not to cause damage to the physical and logical systems of the site.",
+      "moreInfoTitle": "More Information",
+      "moreInfoText": "This policy is effective as of June 22, 2025."
     }
+  },
+  "Footer": {
+    "aboutTitle": "About Us",
+    "aboutText": "A community that will revolutionize everything in programming development. The community of programmers made for programmers.",
+    "resourcesTitle": "Resources",
+    "resourcesProjects": "Projects",
+    "resourcesArticles": "Articles",
+    "resourcesChallenges": "Challenges",
+    "supportTitle": "Support",
+    "supportHelpCenter": "Help Center",
+    "supportDocs": "Documentation",
+    "supportContact": "Contact",
+    "supportFaq": "FAQ",
+    "newsletterTitle": "Newsletter",
+    "newsletterText": "Get the latest updates on our technology.",
+    "copyright": "DARKSTACK. All rights reserved."
+  },
+  "AccountProvidersPage": {
+    "loadingError": "Error loading providers",
+    "loadInfoError": "Error loading information",
+    "retryButton": "Try Again",
+    "title": "Authentication Providers",
+    "subtitle": "Manage your linked accounts and login methods",
+    "emailTitle": "Email/Password",
+    "emailSubtitle": "Traditional login with email and password",
+    "configured": "Configured",
+    "noPassword": "No password",
+    "verified": "Verified",
+    "notVerified": "Not verified",
+    "githubTitle": "GitHub",
+    "followers": "followers",
+    "repositories": "repositories",
+    "syncedAt": "Synced on",
+    "connectGithubPrompt": "Connect your GitHub account for quick login",
+    "viewProfileButton": "View Profile",
+    "unlinkingButton": "Unlinking...",
+    "unlinkButton": "Unlink",
+    "connectingButton": "Connecting...",
+    "connectButton": "Connect GitHub",
+    "googleTitle": "Google",
+    "googleSubtitle": "Login with Google account (Coming soon)",
+    "comingSoon": "Coming soon",
+    "securityTipTitle": "Security Tip",
+    "securityTipText": "Keeping multiple providers linked ensures you always have access to your account, even if one of them is temporarily unavailable.",
+    "unlinkConfirm": "Are you sure you want to unlink your GitHub account?"
+    },
+    "AccountSuspendedPage": {
+    "title": "Account Suspended",
+    "subtitle": "Your account has been temporarily suspended.",
+    "contact": "Please contact an administrator."
+    },
+    "Accessibility": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
+  }
 }
