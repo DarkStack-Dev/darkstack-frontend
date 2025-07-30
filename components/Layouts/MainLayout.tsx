@@ -42,26 +42,32 @@ export const MainLayout = ({ user, children }: Props) => {
     // Define se a página de autenticação está ativa
     const isAuthPage = pathname.includes("/auth");
 
+    // Renderização do layout com o Sidebar
     return (
-        // 2. A estrutura principal agora usa flexbox para organizar o layout
-        <div className="flex flex-col min-h-screen bg-slate-200 dark:bg-slate-950">
-            <Header withSidebarTrigger={!!user && !isAuthPage} />
-            
-            <div className="flex flex-1 mt-[3rem]"> {/* Conteúdo principal começa abaixo do header */}
-                {user && !isAuthPage && (
-                    <SidebarProvider>
-                        <AppSidebar />
-                    </SidebarProvider>
-                )}
-                
-                {/* 3. A 'main' agora ocupa o espaço restante, empurrando o footer para baixo */}
-                <main className="flex-1 overflow-y-auto">
+        <div className="mt-[3rem] relative overflow-hidden bg-slate-200 dark:bg-slate-950">
+            {user && !pathname.includes("auth") ? (
+                <SidebarProvider>
+                    <AppSidebar className="mt-[3rem] h-[calc(100vh-3rem)]" />
+                    
+                    <div className="flex-1">
+                        {/* Coloca o SidebarTrigger dentro do Header */}
+                        <Header withSidebarTrigger={true} />
+                        <div>
+                            <main >
+                                {children}
+                            </main>
+                            <Footer />
+                        </div>
+                    </div>
+                </SidebarProvider>
+            ) : (
+                <div className="flex-1">
+                    <Header />
                     {children}
-                </main>
-            </div>
-            
-            {/* 4. O Footer é renderizado fora da área de conteúdo principal */}
-            <Footer />
+                    <Footer />
+                </div>
+            )}
+
         </div>
     );
 };
