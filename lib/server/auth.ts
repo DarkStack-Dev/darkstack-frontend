@@ -70,7 +70,7 @@ export const handleGetUser = async (): Promise<User | null> => {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 segundos timeout
 
-        const response = await fetch(`${apiUrl}/users`, {
+        const response = await fetch(`${apiUrl}users`, {
             headers: {
                 Authorization: `Bearer ${authCookie}`,
                 'Content-Type': 'application/json'
