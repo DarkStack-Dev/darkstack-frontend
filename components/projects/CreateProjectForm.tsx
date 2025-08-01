@@ -14,7 +14,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
-import { createProjectSchema, CreateProjectFormData, fileToBase64, getImageTypeFromFile } from '@/lib/schemas/projectSchemas';
+// ✅ CORRIGIDO: Importar CreateProjectData em vez de CreateProjectFormData
+import { createProjectSchema, CreateProjectData, fileToBase64, getImageTypeFromFile } from '@/lib/schemas/projectSchemas';
 import { createProject } from '@/lib/api/projects';
 
 type ImagePreview = {
@@ -29,7 +30,8 @@ export const CreateProjectForm = () => {
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
 
-  const form = useForm<CreateProjectFormData>({
+  // ✅ CORRIGIDO: Usar CreateProjectData
+  const form = useForm<CreateProjectData>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
       name: '',
@@ -90,7 +92,8 @@ export const CreateProjectForm = () => {
     })));
   };
 
-  const onSubmit = async (data: CreateProjectFormData) => {
+  // ✅ CORRIGIDO: Usar CreateProjectData
+  const onSubmit = async (data: CreateProjectData) => {
     if (images.length === 0) {
       toast.error('Adicione pelo menos uma imagem');
       return;
